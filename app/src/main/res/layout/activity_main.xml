@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:baselineAligned="true" android:orientation="vertical">
+
+    <Button android:text="Start Logging"
+        android:textSize="20dp"
+        android:id="@+id/start"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="125dp"
+        android:layout_marginBottom="25dp"
+        />
+
+    <Button	android:id="@+id/stop"
+        android:textSize="20dp"
+        android:text="End Logging"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="125dp"
+        />
+
+</LinearLayout>
