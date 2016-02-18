@@ -7,6 +7,8 @@ import android.os.PowerManager.WakeLock;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.Html;
 
 public class MainActivity extends Activity {
 
@@ -27,6 +29,7 @@ public class MainActivity extends Activity {
     Intent intentRec;
     Intent intentSoft;
 //    Intent intentApp;
+    Intent intentNoti;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,9 @@ public class MainActivity extends Activity {
 //		intentRec = new Intent(MainActivity.this, RecordingService.class);
         intentSoft = new Intent(MainActivity.this, SoftSensingService.class);
 //        intentApp = new Intent(MainActivity.this, RunningAppService.class);
+        intentNoti = new Intent(MainActivity.this,NotificationService.class);
+        Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        startActivity(settingNoti);
 
         kgthread = new KeepGoing();
 
@@ -85,6 +91,7 @@ public class MainActivity extends Activity {
 //				stopService(intentRec);
                 stopService(intentSoft);
 //                stopService(intentApp);
+                stopService(intentNoti);
 
                 // remove the notification
                 nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -128,6 +135,7 @@ public class MainActivity extends Activity {
 //					startService(intentRec);
                     startService(intentSoft);
 //                    startService(intentApp);
+                    startService(intentNoti);
 
                     serviceOn = true;
 
@@ -156,6 +164,7 @@ public class MainActivity extends Activity {
                     stopService(intentWifi);
 //					stopService(intentRec);
                     stopService(intentSoft);
+                    stopService(intentNoti);
 //                    stopService(intentApp);
 
                     serviceOn = false;

@@ -1,65 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cpslab.inhwan.cpslogger_v02" >
-
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <receiver android:name=".ServiceReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"></action>
-            </intent-filter>
-        </receiver>
-
-        <service android:name="RunningAppService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.RunningApp" />
-            </intent-filter>
-        </service>
-
-        <service android:name="LocationService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.Location" />
-            </intent-filter>
-        </service>
-
-        <service android:name="MovingService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.Moving" />
-            </intent-filter>
-        </service>
-
-        <service android:name="RecordingService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.Recording" />
-            </intent-filter>
-        </service>
-
-        <service android:name="WifiService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.Wifi" />
-            </intent-filter>
-        </service>
-
-        <service android:name="SoftSensingService" android:enabled="true">
-            <intent-filter>
-                <action android:name="exam.histLogN.SoftSensing" />
-            </intent-filter>
-        </service>
-
-    </application>
+    package="cpslab.inhwan.cpslogger_v02">
 
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
@@ -86,5 +27,83 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".ServiceReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".RunningAppService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.RunningApp" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".LocationService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.Location" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".MovingService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.Moving" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".RecordingService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.Recording" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".WifiService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.Wifi" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".SoftSensingService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="exam.histLogN.SoftSensing" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="exam.histLogN.NotificationListener" />
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".LoggingService"
+            android:enabled="true"></service>
+    </application>
 
 </manifest>
