@@ -11,13 +11,14 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 public class LoggingService extends Service {
     String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-    String fileName, filePath;
-    File file;
-    FileOutputStream fileOutputStream;
-    OutputStreamWriter outputStreamWriter;
+    String currentDate;
+    Map<String, File> files;
+    Map<String, FileOutputStream> fileOutputStreams;
+    Map<String, OutputStreamWriter> outputStreamWriters;
 
     @Override
     public void onCreate(){
@@ -28,18 +29,7 @@ public class LoggingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId){
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_mm_dd");
-        fileName = "CPSLogger_" + simpleDateFormat.format(date) + ".csv";
-        filePath = baseDir + File.pathSeparator + "CPSLogger" + File.separator+fileName;
-
-        file = new File(filePath);
-
-        try{
-            fileOutputStream = new FileOutputStream(file);
-            outputStreamWriter = new OutputStreamWriter(fileOutputStream);
-        }
-        catch (Exception e){
-            Log.e("Logging", e.toString());
-        }
+        currentDate = simpleDateFormat.format(date);
 
         return START_STICKY;
     }
@@ -47,22 +37,45 @@ public class LoggingService extends Service {
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+    public void createFile(String name){
+        String fileName = "CPSLogger_" + name + "_" + currentDate + ".csv";
+        String filePath = baseDir + File.pathSeparator + "CPSLogger" + File.separator+fileName;
+
+        File file = new File(filePath);
 
         try{
-            outputStreamWriter.close();
-            fileOutputStream.close();
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            fileOutputStreams.put(name,fileOutputStream);
+            outputStreamWriters.put(name,outputStreamWriter);
+        }
+        catch (Exception e){
+            Log.e("Logging",e.toString());
+        }
+    }
+
+    public void writeData(String name, String data){
+        SimpleDateFormat format = new SimpleDateFormat("kk:mm:ss.SSS");
+        String timeStamp = format.format(new Date());
+
+        try{
+            OutputStreamWriter osw = outputStreamWriters.get(name);
+            osw.write(timeStamp + "," + data);
         }
         catch (Exception e){
             Log.e("Logging", e.toString());
         }
     }
 
-    public void writeData(String data){
-        SimpleDateFormat format = new SimpleDateFormat("kk:mm:ss.SSS");
-        String timeStamp = format.format(new Date());
-
+    public void closeFile(String name){
         try{
-            outputStreamWriter.write(timeStamp+","+data);
+            FileOutputStream fos = fileOutputStreams.get(name);
+            OutputStreamWriter osw = outputStreamWriters.get(name);
+
+            osw.close();
+            fos.close();
         }
         catch (Exception e){
             Log.e("Logging", e.toString());
