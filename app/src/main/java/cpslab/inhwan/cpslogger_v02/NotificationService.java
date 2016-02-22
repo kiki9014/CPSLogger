@@ -46,10 +46,10 @@ public class NotificationService extends NotificationListenerService {
 
         startTrigger = true;
 
-        StatusBarNotification[] acticeNoti = getActiveNotifications();
-        for (StatusBarNotification sbn:acticeNoti) {
-            getNotiData(sbn);
-        }
+        //StatusBarNotification[] acticeNoti = getActiveNotifications();
+        //for (StatusBarNotification sbn:acticeNoti) {
+            //getNotiData(sbn);
+        //}
 
         Toast.makeText(this,"NotificationCollecting is Started",Toast.LENGTH_SHORT).show();
 

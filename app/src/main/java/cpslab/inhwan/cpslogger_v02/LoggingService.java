@@ -57,6 +57,18 @@ public class LoggingService extends Service {
         }
     }
 
+    public void writeData(String data){
+        SimpleDateFormat format = new SimpleDateFormat("kk:mm:ss.SSS");
+        String timeStamp = format.format(new Date());
+
+        try{
+            outputStreamWriter.write(timeStamp+","+data);
+        }
+        catch (Exception e){
+            Log.e("Logging", e.toString());
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
