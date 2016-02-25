@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -55,8 +56,15 @@ public class MainActivity extends Activity {
         intentSoft = new Intent(MainActivity.this, SoftSensingService.class);
 //        intentApp = new Intent(MainActivity.this, RunningAppService.class);
         intentNoti = new Intent(MainActivity.this,NotificationService.class);
-        Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-        startActivity(settingNoti);
+        ContentResolver contentResolver = this.getContentResolver();
+        String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
+        if(enabledNoti.contains(this.getPackageName())){
+            Log.d("main","Already Set");
+        }
+        else{
+            Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            startActivity(settingNoti);
+        }
 
         kgthread = new KeepGoing();
 
@@ -91,7 +99,9 @@ public class MainActivity extends Activity {
 //				stopService(intentRec);
                 stopService(intentSoft);
 //                stopService(intentApp);
-                stopService(intentNoti);
+                Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
+                i.putExtra("Notification_Event","QUIT");
+                sendBroadcast(i);
 
                 // remove the notification
                 nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);

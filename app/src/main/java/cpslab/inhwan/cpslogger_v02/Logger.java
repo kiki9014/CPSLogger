@@ -5,6 +5,8 @@ package cpslab.inhwan.cpslogger_v02;
  */
 
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -20,17 +22,26 @@ public class Logger {
 
     Logger(String name){
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_mm_dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd");
         currentDate = simpleDateFormat.format(date);
 
         createFile(name);
     }
 
     public void createFile(String name){
-        String fileName = "CPSLogger_" + name + "_" + currentDate + ".csv";
-        String filePath = baseDir + File.pathSeparator + "CPSLogger" + File.separator+fileName;
+        String fileName = "CPSLogger_" + name + "_" + currentDate + ".txt";
+        String directory = baseDir + File.separator+"CPSLogger" + File.separator + name;
+        Log.d("Logger",name+" Logger File will create soon");
 
-        File file = new File(filePath);
+        File dir = new File(directory);
+        if(!dir.exists()){
+            dir.mkdirs();
+            Log.i(name, "Directory is created");
+        }
+        else
+            Log.i(name, "Directory is already exist");
+
+        file = new File(dir,fileName);
 
         try{
             fileOutputStream = new FileOutputStream(file);
