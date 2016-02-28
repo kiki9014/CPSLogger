@@ -108,8 +108,11 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="cpslab.inhwan.cpslogger_v02.GearCommService"/>
-            </intent-filter></service>
+                <action android:name="cpslab.inhwan.cpslogger_v02.GearCommService" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".textInput"></activity>
     </application>
 
 </manifest>
