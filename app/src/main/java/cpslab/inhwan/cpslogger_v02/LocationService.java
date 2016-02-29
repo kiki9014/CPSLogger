@@ -15,6 +15,10 @@ public class LocationService extends Service {
     LocationManager mLocMan;
     String mProvider;
     LocationListener locL;
+    String name = "Location";
+    Logger locLogger = new Logger(name);
+
+    boolean fileOpen;
 
     public void onCreate() {
         super.onCreate();
@@ -23,11 +27,17 @@ public class LocationService extends Service {
 //		mProvider = mLocMan.NETWORK_PROVIDER;
         locL = new locListener();
 //		unregisterRestartAlarm();
+
+        fileOpen = true;
     }
 
     public void onDestroy() {
         super.onDestroy();
         mLocMan.removeUpdates(locL);
+        if (fileOpen) {
+            locLogger.closeFile(name);
+            fileOpen = false;
+        }
 //		registerRestartAlarm();
 //		Toast.makeText(this, "Loc-Watching is ended", 0).show();
     }
@@ -37,6 +47,11 @@ public class LocationService extends Service {
         mLocMan.requestLocationUpdates(mProvider, 30000, 1, locL);
         mLocMan.addNmeaListener(m_nmea_listener);
         Toast.makeText(this, "Loc-Watching is started", Toast.LENGTH_SHORT).show();
+
+        if(!fileOpen){
+            locLogger.createFile(name);
+            fileOpen = true;
+        }
 
         return START_STICKY;
     }
@@ -52,6 +67,10 @@ public class LocationService extends Service {
 //			}
 
             Log.d("GPS: ", "LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
+
+            if(fileOpen)
+                locLogger.writeData("LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
+
 
         }
         public void onProviderDisabled(String provider) {
@@ -71,6 +90,8 @@ public class LocationService extends Service {
 //                mTxtGPSno.setText("GPS No: " + str_temp[7] + "\n");
 //                lg_GPS.o("No. of Satellite: " + str_temp[7]);
                 Log.d("No. of Satellite", str_temp[7]);
+                if(fileOpen)
+                    locLogger.writeData("No. of Satellite : "+ str_temp[7]);
             }
 
         }

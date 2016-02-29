@@ -73,7 +73,7 @@ public class NotificationService extends NotificationListenerService {
             notiLogger.createFile(name);
             fileOpen = true;
         }
-        notiLogger.writeData(name, "Previous Notification");
+        notiLogger.writeData("Previous Notification");
 
         StatusBarNotification[] acticeNoti = NotificationService.this.getActiveNotifications();
         for (StatusBarNotification sbn:acticeNoti) {
@@ -82,7 +82,7 @@ public class NotificationService extends NotificationListenerService {
 
         Toast.makeText(this,"NotificationCollecting is Started",Toast.LENGTH_SHORT).show();
 
-        notiLogger.writeData(name, "Notification Listen Service is started");
+        notiLogger.writeData("Notification Listen Service is started");
 
         return START_NOT_STICKY;
     }
@@ -140,10 +140,10 @@ public class NotificationService extends NotificationListenerService {
         else
             action = "removed";
 
-        textToSave = pack + "," + ticker + "," + title + "," + text + "," + sbText + "," +  action + "\n";
+        textToSave = pack + "," + ticker + "," + title + "," + text + "," + sbText + "," +  action;
 
         if(fileOpen)
-            notiLogger.writeData(name, textToSave);
+            notiLogger.writeData(textToSave);
     }
 
     public class broadcastReceiver extends BroadcastReceiver{

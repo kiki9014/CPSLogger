@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.provider.Browser;
 import android.telephony.gsm.SmsMessage;
 import android.content.ClipboardManager;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 import android.net.TrafficStats;
@@ -45,6 +46,10 @@ public class SoftSensingService extends Service {
     long tx;
     long rx;
 
+    String name = "Soft";
+    Logger softLogger = new Logger(name);
+    boolean fileOpen;
+
     public void onCreate() {
         super.onCreate();
 
@@ -69,6 +74,8 @@ public class SoftSensingService extends Service {
         // Memory Information
         mi = new ActivityManager.MemoryInfo();
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+        fileOpen = true;
     }
 
     public void onDestroy() {
@@ -77,6 +84,11 @@ public class SoftSensingService extends Service {
         histCur.close();
         bookCur.close();
         keyCur.close();
+
+        if(fileOpen){
+            softLogger.closeFile(name);
+            fileOpen = false;
+        }
 //		smsCur.close();
     }
 
@@ -107,6 +119,11 @@ public class SoftSensingService extends Service {
         dataTh datath = new dataTh();
         datath.start();
 
+        if(!fileOpen){
+            softLogger.createFile(name);
+            fileOpen = true;
+        }
+
         return START_STICKY;		//Sticky n Unsticky: what is the difference?
     }
 
@@ -131,6 +148,8 @@ public class SoftSensingService extends Service {
                 clipTxt = item.toString();
 
                 Log.i("clipboard", clipTxt);
+                if(fileOpen)
+                    softLogger.writeData("clip,"+clipTxt);
             }
 
 //            while(!mQuit) {
@@ -198,6 +217,10 @@ public class SoftSensingService extends Service {
                     // Do something with title and url
                             Log.i("histtitle", title);
                             Log.i("histurl", url);
+                    if(fileOpen){
+                        softLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        softLogger.writeData("histURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                    }
 
                     histCur.moveToNext();
                 }
@@ -251,8 +274,14 @@ public class SoftSensingService extends Service {
                     title = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
                     url = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.URL));
                     // Do something with title and url
+
+                    String book = Base64.encodeToString(title.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP);
                             Log.i("booktitle", title);
                             Log.i("bookurl", url);
+                    if(fileOpen){
+                        softLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        softLogger.writeData("bookURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                    }
 
                     bookCur.moveToNext();
                 }
@@ -308,11 +337,16 @@ public class SoftSensingService extends Service {
             if (keyCur.moveToFirst() && keyCur.getCount() > 0) {
                 while (keyCur.isAfterLast() == false) {
 
+                    String key;
                     date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
                     search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
                     // Do something with date and search(keyword)
+
+                    key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
                             Log.i("date", date);
                             Log.i("search", search);
+                    if(fileOpen)
+                        softLogger.writeData(key);
 
                     keyCur.moveToNext();
                 }
@@ -399,6 +433,8 @@ public class SoftSensingService extends Service {
                     activityManager.getMemoryInfo(mi);
                     availableMems = mi.availMem / 1048576L;
                     Log.i("AvailMem", Long.toString(availableMems));
+                    if(fileOpen)
+                        softLogger.writeData("AvaliMem,"+Long.toString(availableMems));
 
                     sleep(30000);
                 } catch (InterruptedException e) {
@@ -423,6 +459,12 @@ public class SoftSensingService extends Service {
                         // add packageInfo.uid to UIDs list
                         tx = TrafficStats.getUidTxBytes(packageInfo.uid);
                         rx = TrafficStats.getUidRxBytes(packageInfo.uid);
+
+                        if(fileOpen){
+                            softLogger.writeData("Uid,"+Integer.toString(packageInfo.uid));
+                            softLogger.writeData("tx,"+Long.toString(tx));
+                            softLogger.writeData("rx,"+Long.toString(rx));
+                        }
 //                        Log.i("Uid", Integer.toString(packageInfo.uid));
 //                        Log.i("Tx", Long.toString(tx));
 //                        Log.i("Rx", Long.toString(rx));

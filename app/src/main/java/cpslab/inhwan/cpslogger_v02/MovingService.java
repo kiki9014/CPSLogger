@@ -40,11 +40,16 @@ public class MovingService extends Service {
 
     double [] ac = new double[3];
 
+    String name = "Moving";
+    Logger movLogger = new Logger(name);
+    boolean fileOpen;
+
     public void onCreate() {
         super.onCreate();
 
         mSm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
+        fileOpen = true;
         //		unregisterRestartAlarm();
     }
 
@@ -54,6 +59,11 @@ public class MovingService extends Service {
         mSm.unregisterListener(accL);
         mSm.unregisterListener(magL);
         mSm.unregisterListener(gyrL);
+
+        if (fileOpen) {
+            movLogger.closeFile(name);
+            fileOpen = false;
+        }
 
         //		registerRestartAlarm();
         //		Toast.makeText(this, "Mov-Watching is ended", 0).show();		//toast message
@@ -85,6 +95,11 @@ public class MovingService extends Service {
 
         Toast.makeText(this, "Mov-Watching is started", Toast.LENGTH_SHORT).show();		//toast message
 
+        if(!fileOpen){
+            movLogger.createFile(name);
+            fileOpen = true;
+        }
+
         return START_STICKY;		//Sticky & Unsticky: what is the difference?
     }
 
@@ -104,6 +119,8 @@ public class MovingService extends Service {
                 acc[1] = Double.toString(accc[1]);
                 acc[2] = Double.toString(accc[2]);
 //                Log.d("acc", acc[0] + ", " + acc[1] + ", " + acc[2]);
+                if(fileOpen)
+                    movLogger.writeData(acc[0] + ", " + acc[1] + ", " + acc[2]);
 
 //                lg_Mov.o(acc[0] + ", " + acc[1] + ", " + acc[2]);
             }
@@ -121,6 +138,8 @@ public class MovingService extends Service {
                 gyr[1] = Double.toString(gyro[1]);
                 gyr[2] = Double.toString(gyro[2]);
 //                Log.d("gyr", gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
+                if(fileOpen)
+                    movLogger.writeData(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
 
 //                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
             }
@@ -138,6 +157,8 @@ public class MovingService extends Service {
                 mag[1] = Double.toString(magg[1]);
                 mag[2] = Double.toString(magg[2]);
 //                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
+                if(fileOpen)
+                    movLogger.writeData(mag[0] + ", " + mag[1] + ", " + mag[2]);
 
 //                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
             }

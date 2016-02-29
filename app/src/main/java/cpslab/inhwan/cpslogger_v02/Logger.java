@@ -52,12 +52,12 @@ public class Logger {
         }
     }
 
-    public void writeData(String name, String data){
+    public void writeData(String data){
         SimpleDateFormat format = new SimpleDateFormat("kk:mm:ss.SSS");
         String timeStamp = format.format(new Date());
 
         try{
-            outputStreamWriter.write(timeStamp + "," + data);
+            outputStreamWriter.write(timeStamp + "," + data+"\n");
         }
         catch (Exception e){
             Log.e("Logging", e.toString());
