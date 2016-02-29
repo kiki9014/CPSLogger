@@ -345,8 +345,10 @@ public class SoftSensingService extends Service {
                     key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
                             Log.i("date", date);
                             Log.i("search", search);
-                    if(fileOpen)
-                        softLogger.writeData(key);
+                    if(fileOpen){
+                        softLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
+                        softLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
+                    }
 
                     keyCur.moveToNext();
                 }

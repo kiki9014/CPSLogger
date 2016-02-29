@@ -69,7 +69,7 @@ public class LocationService extends Service {
             Log.d("GPS: ", "LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
 
             if(fileOpen)
-                locLogger.writeData("LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
+                locLogger.writeData("GPS," + location.getLatitude() + "," + location.getLongitude() + "," + location.getAltitude());
 
 
         }
@@ -91,7 +91,7 @@ public class LocationService extends Service {
 //                lg_GPS.o("No. of Satellite: " + str_temp[7]);
                 Log.d("No. of Satellite", str_temp[7]);
                 if(fileOpen)
-                    locLogger.writeData("No. of Satellite : "+ str_temp[7]);
+                    locLogger.writeData("SAT,"+ str_temp[7]);
             }
 
         }

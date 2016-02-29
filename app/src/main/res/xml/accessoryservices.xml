@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources>
+<resources>
+    <application name="CPSLogger_v0.2">
+        <serviceProfile role = "provider" name = "gearComm" serviceTimeout="10" serviceLimit="ANY" version="1.0"
+            serviceImpl="cpslab.inhwan.cpslogger_v02.GearCommService" id="/logger/gearComm">
+            <supportedTransports>
+                <transport type="TRANSPORT_BT"/>
+            </supportedTransports>
+            <serviceChannel id="104" reliability="enable" priority="low" dataRate="low"/>
+        </serviceProfile>
+    </application>
+</resources>

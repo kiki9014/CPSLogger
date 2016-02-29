@@ -120,7 +120,7 @@ public class MovingService extends Service {
                 acc[2] = Double.toString(accc[2]);
 //                Log.d("acc", acc[0] + ", " + acc[1] + ", " + acc[2]);
                 if(fileOpen)
-                    movLogger.writeData(acc[0] + ", " + acc[1] + ", " + acc[2]);
+                    movLogger.writeData("acc" +"," + acc[0] + ", " + acc[1] + ", " + acc[2]);
 
 //                lg_Mov.o(acc[0] + ", " + acc[1] + ", " + acc[2]);
             }
@@ -139,7 +139,7 @@ public class MovingService extends Service {
                 gyr[2] = Double.toString(gyro[2]);
 //                Log.d("gyr", gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
                 if(fileOpen)
-                    movLogger.writeData(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
+                    movLogger.writeData("gyro," + gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
 
 //                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
             }
@@ -158,7 +158,7 @@ public class MovingService extends Service {
                 mag[2] = Double.toString(magg[2]);
 //                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
                 if(fileOpen)
-                    movLogger.writeData(mag[0] + ", " + mag[1] + ", " + mag[2]);
+                    movLogger.writeData("mag," + mag[0] + ", " + mag[1] + ", " + mag[2]);
 
 //                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
             }
