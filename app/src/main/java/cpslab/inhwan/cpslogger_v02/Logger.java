@@ -44,7 +44,7 @@ public class Logger {
         file = new File(dir,fileName);
 
         try{
-            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream = new FileOutputStream(file,true);
             outputStreamWriter = new OutputStreamWriter(fileOutputStream);
         }
         catch (Exception e){
@@ -53,7 +53,7 @@ public class Logger {
     }
 
     public void writeData(String data){
-        SimpleDateFormat format = new SimpleDateFormat("kk:mm:ss.SSS");
+        SimpleDateFormat format = new SimpleDateFormat("kk,mm,ss.SSS");
         String timeStamp = format.format(new Date());
 
         try{

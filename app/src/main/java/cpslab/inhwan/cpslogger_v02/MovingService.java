@@ -40,8 +40,12 @@ public class MovingService extends Service {
 
     double [] ac = new double[3];
 
-    String name = "Moving";
-    Logger movLogger = new Logger(name);
+    String nameAcc = "Acc";
+    String nameGyro = "Gyro";
+    String nameMag = "Mag";
+    Logger accLogger = new Logger(nameAcc);
+    Logger gyroLogger = new Logger(nameGyro);
+    Logger magLogger = new Logger(nameMag);
     boolean fileOpen;
 
     public void onCreate() {
@@ -61,7 +65,9 @@ public class MovingService extends Service {
         mSm.unregisterListener(gyrL);
 
         if (fileOpen) {
-            movLogger.closeFile(name);
+            accLogger.closeFile(nameAcc);
+            gyroLogger.closeFile(nameGyro);
+            magLogger.closeFile(nameMag);
             fileOpen = false;
         }
 
@@ -96,7 +102,9 @@ public class MovingService extends Service {
         Toast.makeText(this, "Mov-Watching is started", Toast.LENGTH_SHORT).show();		//toast message
 
         if(!fileOpen){
-            movLogger.createFile(name);
+            accLogger.createFile(nameAcc);
+            gyroLogger.createFile(nameGyro);
+            magLogger.createFile(nameMag);
             fileOpen = true;
         }
 
@@ -120,7 +128,7 @@ public class MovingService extends Service {
                 acc[2] = Double.toString(accc[2]);
 //                Log.d("acc", acc[0] + ", " + acc[1] + ", " + acc[2]);
                 if(fileOpen)
-                    movLogger.writeData("acc" +"," + acc[0] + ", " + acc[1] + ", " + acc[2]);
+                    accLogger.writeData("1" +"," + acc[0] + ", " + acc[1] + ", " + acc[2]);
 
 //                lg_Mov.o(acc[0] + ", " + acc[1] + ", " + acc[2]);
             }
@@ -139,7 +147,7 @@ public class MovingService extends Service {
                 gyr[2] = Double.toString(gyro[2]);
 //                Log.d("gyr", gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
                 if(fileOpen)
-                    movLogger.writeData("gyro," + gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
+                    gyroLogger.writeData("2," + gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
 
 //                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
             }
@@ -158,7 +166,7 @@ public class MovingService extends Service {
                 mag[2] = Double.toString(magg[2]);
 //                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
                 if(fileOpen)
-                    movLogger.writeData("mag," + mag[0] + ", " + mag[1] + ", " + mag[2]);
+                    magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
 
 //                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
             }

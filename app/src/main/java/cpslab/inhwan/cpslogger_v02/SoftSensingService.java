@@ -149,7 +149,7 @@ public class SoftSensingService extends Service {
 
                 Log.i("clipboard", clipTxt);
                 if(fileOpen)
-                    softLogger.writeData("clip,"+clipTxt);
+                    softLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
             }
 
 //            while(!mQuit) {

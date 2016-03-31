@@ -57,7 +57,9 @@ public class MainActivity extends Activity {
         intentSoft = new Intent(MainActivity.this, SoftSensingService.class);
 //        intentApp = new Intent(MainActivity.this, RunningAppService.class);
         intentNoti = new Intent(MainActivity.this,NotificationService.class);
-        intentGear = new Intent(MainActivity.this, GearCommService.class);
+        //intentGear = new Intent(MainActivity.this, GearService.class);
+
+        //startService(intentGear);
 
         ContentResolver contentResolver = this.getContentResolver();
         String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
@@ -84,6 +86,8 @@ public class MainActivity extends Activity {
 
                 // start the thread
                 kgthread.start();
+                //Intent textInputAct = new Intent(MainActivity.this,textInput.class);
+                //startActivity(textInputAct);
             }
         });
 
@@ -101,7 +105,7 @@ public class MainActivity extends Activity {
                 stopService(intentWifi);
 //				stopService(intentRec);
                 stopService(intentSoft);
-                stopService(intentGear);
+                //stopService(intentGear);
 //                stopService(intentApp);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
                 i.putExtra("Notification_Event","QUIT");
@@ -123,6 +127,7 @@ public class MainActivity extends Activity {
 
     public void onDestroy() {
         super.onDestroy();
+        //stopService(intentGear);
     }
 
     public void onPause() {
@@ -150,7 +155,7 @@ public class MainActivity extends Activity {
                     startService(intentSoft);
 //                    startService(intentApp);
                     startService(intentNoti);
-                    startService(intentGear);
+//                    startService(intentGear);
 
                     serviceOn = true;
 
@@ -181,7 +186,7 @@ public class MainActivity extends Activity {
                     stopService(intentSoft);
                     stopService(intentNoti);
 //                    stopService(intentApp);
-                    stopService(intentGear);
+//                    stopService(intentGear);
 
                     serviceOn = false;
 
