@@ -19,6 +19,7 @@ public class WifiService extends Service {
 
     WifiManager mWifiMan;
     StringBuilder sb = new StringBuilder();
+    StringBuilder sbOrigin = new StringBuilder();
 
     String name = "Wifi";
     Logger wifiLogger = new Logger(name);
@@ -73,17 +74,24 @@ public class WifiService extends Service {
                     mWifiMan.startScan();
                     List<ScanResult> configs = mWifiMan.getScanResults();
                     sb = new StringBuilder();
+                    sbOrigin = new StringBuilder();
                     for(int i = 0; i < configs.size(); i++) {
-                        String line = (configs.get(i)).toString();
-                        String seg[] = line.split(",");
+                        String BSSID = configs.get(i).BSSID;
+                        String SSID = configs.get(i).SSID;
+                        String cap = configs.get(i).capabilities;
+                        int freq = configs.get(i).frequency;
+                        int level = configs.get(i).level;
 
-                        sb.append(Base64.encodeToString((seg[0] + ", " + seg[1] + ", " + seg[3] + "\n").getBytes(),Base64.NO_WRAP));
+                        sb.append(Base64.encodeToString((BSSID + "," + SSID + "," + cap + "," + freq + "," + level).getBytes(),Base64.NO_WRAP));
+                        sbOrigin.append(BSSID + "," + SSID + "," + cap + "," + freq + "," + level + "\n");
 
 //                        sb.append(new Integer(i+1).toString() + "::");
 //                        sb.append(seg[0] + "\n" + seg[1] + "\n" + seg[3]);
 //                        sb.append("\n\n");
+                        if(i < configs.size() - 1)
+                            sb.append(",");
                     }
-                    Log.d("Wifi Connection Info: ", sb + "\n");
+                    Log.d("Wifi Connection Info: ", sbOrigin + "\n");
                     wifiLogger.writeData(sb.toString());
                     sleep(30000);
                 } catch (InterruptedException e) {

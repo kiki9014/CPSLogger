@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
     Intent intentWifi;
     Intent intentRec;
     Intent intentSoft;
-//    Intent intentApp;
+    Intent intentApp;
     Intent intentNoti;
     Intent intentGear;
 
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         intentWifi = new Intent(MainActivity.this, WifiService.class);
 //		intentRec = new Intent(MainActivity.this, RecordingService.class);
         intentSoft = new Intent(MainActivity.this, SoftSensingService.class);
-//        intentApp = new Intent(MainActivity.this, RunningAppService.class);
+        intentApp = new Intent(MainActivity.this, RunningAppService.class);
         intentNoti = new Intent(MainActivity.this,NotificationService.class);
         //intentGear = new Intent(MainActivity.this, GearService.class);
 
@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 //				stopService(intentRec);
                 stopService(intentSoft);
                 //stopService(intentGear);
-//                stopService(intentApp);
+                stopService(intentApp);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
                 i.putExtra("Notification_Event","QUIT");
                 sendBroadcast(i);
@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
                     startService(intentWifi);
 //					startService(intentRec);
                     startService(intentSoft);
-//                    startService(intentApp);
+                    startService(intentApp);
                     startService(intentNoti);
 //                    startService(intentGear);
 
@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 //					stopService(intentRec);
                     stopService(intentSoft);
                     stopService(intentNoti);
-//                    stopService(intentApp);
+                    stopService(intentApp);
 //                    stopService(intentGear);
 
                     serviceOn = false;

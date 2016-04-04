@@ -46,8 +46,18 @@ public class SoftSensingService extends Service {
     long tx;
     long rx;
 
-    String name = "Soft";
-    Logger softLogger = new Logger(name);
+    String nameClip = "Clip";
+    String nameHist = "Hist";
+    String nameBook = "Book";
+    String nameKey = "Key";
+    String nameMem = "Mem";
+    String nameData = "Data";
+    Logger clipLogger = new Logger(nameClip);
+    Logger histLogger = new Logger(nameHist);
+    Logger bookLogger = new Logger(nameBook);
+    Logger keyLogger = new Logger(nameKey);
+    Logger memLogger = new Logger(nameMem);
+    Logger dataLogger = new Logger(nameData);
     boolean fileOpen;
 
     public void onCreate() {
@@ -86,7 +96,12 @@ public class SoftSensingService extends Service {
         keyCur.close();
 
         if(fileOpen){
-            softLogger.closeFile(name);
+            clipLogger.closeFile(nameClip);
+            histLogger.closeFile(nameHist);
+            bookLogger.closeFile(nameBook);
+            keyLogger.closeFile(nameKey);
+            memLogger.closeFile(nameMem);
+            dataLogger.closeFile(nameData);
             fileOpen = false;
         }
 //		smsCur.close();
@@ -120,7 +135,12 @@ public class SoftSensingService extends Service {
         datath.start();
 
         if(!fileOpen){
-            softLogger.createFile(name);
+            clipLogger.createFile(nameClip);
+            histLogger.createFile(nameHist);
+            bookLogger.createFile(nameBook);
+            keyLogger.createFile(nameKey);
+            memLogger.createFile(nameMem);
+            dataLogger.createFile(nameData);
             fileOpen = true;
         }
 
@@ -149,7 +169,7 @@ public class SoftSensingService extends Service {
 
                 Log.i("clipboard", clipTxt);
                 if(fileOpen)
-                    softLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
+                    clipLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
             }
 
 //            while(!mQuit) {
@@ -218,8 +238,8 @@ public class SoftSensingService extends Service {
                             Log.i("histtitle", title);
                             Log.i("histurl", url);
                     if(fileOpen){
-                        softLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        softLogger.writeData("histURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        histLogger.writeData("histURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                     }
 
                     histCur.moveToNext();
@@ -279,8 +299,8 @@ public class SoftSensingService extends Service {
                             Log.i("booktitle", title);
                             Log.i("bookurl", url);
                     if(fileOpen){
-                        softLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        softLogger.writeData("bookURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        bookLogger.writeData("bookURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                     }
 
                     bookCur.moveToNext();
@@ -346,8 +366,8 @@ public class SoftSensingService extends Service {
                             Log.i("date", date);
                             Log.i("search", search);
                     if(fileOpen){
-                        softLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
-                        softLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
+                        keyLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
+                        keyLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
                     }
 
                     keyCur.moveToNext();
@@ -436,7 +456,7 @@ public class SoftSensingService extends Service {
                     availableMems = mi.availMem / 1048576L;
                     Log.i("AvailMem", Long.toString(availableMems));
                     if(fileOpen)
-                        softLogger.writeData("AvaliMem,"+Long.toString(availableMems));
+                        memLogger.writeData("AvaliMem,"+Long.toString(availableMems));
 
                     sleep(30000);
                 } catch (InterruptedException e) {
@@ -463,9 +483,9 @@ public class SoftSensingService extends Service {
                         rx = TrafficStats.getUidRxBytes(packageInfo.uid);
 
                         if(fileOpen){
-                            softLogger.writeData("Uid,"+Integer.toString(packageInfo.uid));
-                            softLogger.writeData("tx,"+Long.toString(tx));
-                            softLogger.writeData("rx,"+Long.toString(rx));
+                            dataLogger.writeData("Uid,"+Integer.toString(packageInfo.uid));
+                            dataLogger.writeData("tx,"+Long.toString(tx));
+                            dataLogger.writeData("rx,"+Long.toString(rx));
                         }
 //                        Log.i("Uid", Integer.toString(packageInfo.uid));
 //                        Log.i("Tx", Long.toString(tx));
