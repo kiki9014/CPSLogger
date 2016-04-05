@@ -4,11 +4,17 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.telephony.CellInfo;
+import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
+import android.telephony.ServiceState;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class SignalSensingService extends Service {
 
@@ -18,7 +24,7 @@ public class SignalSensingService extends Service {
 
     boolean fileOpen;
 
-    MyPhoneStateListener phoneListener;
+    MyPhoneState phoneListener;
     TelephonyManager telephony;
 
     public SignalSensingService() {
@@ -27,9 +33,13 @@ public class SignalSensingService extends Service {
     @Override
     public void onCreate(){
         super.onCreate();
-        phoneListener = new MyPhoneStateListener();
+        phoneListener = new MyPhoneState();
         telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        telephony.listen(phoneListener, PhoneStateListener.LISTEN_SERVICE_STATE);
+        telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
+        telephony.listen(phoneListener, PhoneStateListener.LISTEN_CELL_INFO);
+        telephony.listen(phoneListener, PhoneStateListener.LISTEN_CELL_LOCATION);
 
         fileOpen = true;
     }
@@ -65,7 +75,9 @@ public class SignalSensingService extends Service {
         return null;
     }
 
-    private class MyPhoneStateListener extends PhoneStateListener{
+    private class MyPhoneState extends PhoneStateListener{
+        private static final String TAG = "Phone";
+
         public int signalStrengths;
 
         @Override
@@ -78,5 +90,28 @@ public class SignalSensingService extends Service {
             sigLogger.writeData(signal);
 
         }
+
+        @Override
+        public void onCellInfoChanged(List<CellInfo> cellInfos){
+            if(cellInfos != null && cellInfos.size() != 0){
+                for(CellInfo cellInfo : cellInfos){
+                    Log.d(name+"|Info", cellInfo.toString());
+                }
+            }
+        }
+
+        @Override
+        public void onCellLocationChanged(CellLocation cellLocation){
+            int cid,lac,psc;
+            GsmCellLocation cellLoc = (GsmCellLocation)cellLocation;
+            cid  = cellLoc.getCid();
+            lac = cellLoc.getLac();
+            psc = cellLoc.getPsc();
+
+            String cellLocData = "cellLoc " + cid + " " + lac + " " + psc;
+            Log.d(name+"|Loc", cellLocData);
+            sigLogger.writeData(cellLocData);
+        }
+
     }
 }

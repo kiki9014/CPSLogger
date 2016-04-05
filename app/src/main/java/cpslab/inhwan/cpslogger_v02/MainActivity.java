@@ -102,13 +102,13 @@ public class MainActivity extends Activity {
                 onOff = true; // indicates that the end button is pressed
 
                 // stop services
-                stopService(intentLoc);
-                stopService(intentMov);
-                stopService(intentWifi);
+//                stopService(intentLoc);
+//                stopService(intentMov);
+//                stopService(intentWifi);
 //				stopService(intentRec);
-                stopService(intentSoft);
+//                stopService(intentSoft);
 //                stopService(intentGear);
-                stopService(intentApp);
+//                stopService(intentApp);
                 stopService(intentSig);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
                 i.putExtra("Notification_Event","QUIT");
@@ -151,13 +151,13 @@ public class MainActivity extends Activity {
                     Log.d("mButton", "okok");
 
                     // start services
-                    startService(intentLoc);
-                    startService(intentMov);
-                    startService(intentWifi);
+//                    startService(intentLoc);
+//                    startService(intentMov);
+//                    startService(intentWifi);
 //					startService(intentRec);
-                    startService(intentSoft);
-                    startService(intentApp);
-                    startService(intentNoti);
+//                    startService(intentSoft);
+//                    startService(intentApp);
+//                    startService(intentNoti);
 //                    startService(intentGear);
                     startService(intentSig);
 
@@ -183,13 +183,13 @@ public class MainActivity extends Activity {
                     // restart in order to prevent auto quitting
                     sleep(1200000);
 
-                    stopService(intentLoc);
-                    stopService(intentMov);
-                    stopService(intentWifi);
+//                    stopService(intentLoc);
+//                    stopService(intentMov);
+//                    stopService(intentWifi);
 //					stopService(intentRec);
-                    stopService(intentSoft);
-                    stopService(intentNoti);
-                    stopService(intentApp);
+//                    stopService(intentSoft);
+//                    stopService(intentNoti);
+//                    stopService(intentApp);
 //                    stopService(intentGear);
                     stopService(intentSig);
 
