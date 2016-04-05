@@ -58,7 +58,7 @@ public class RunningAppService extends Service {
 
                     ComponentName topActivity = taskInfos.get(0).topActivity;
                     String pkgName = topActivity.getPackageName();
-                    Log.i("pkgName", pkgName);
+//                    Log.i("pkgName", pkgName);
 
                     if(pkgName.compareTo(pkgbuff) != 0 ) {
 //                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");

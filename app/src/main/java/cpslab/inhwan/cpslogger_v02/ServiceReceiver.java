@@ -14,6 +14,7 @@ public class ServiceReceiver extends BroadcastReceiver {
         MyPhoneStateListener phoneListener = new MyPhoneStateListener();
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
+        telephony.listen(phoneListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_SERVICE_STATE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
         Intent testActivityIntent = new Intent(context, MainActivity.class);

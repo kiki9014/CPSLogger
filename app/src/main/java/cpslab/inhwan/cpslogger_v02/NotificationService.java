@@ -118,11 +118,13 @@ public class NotificationService extends NotificationListenerService {
 
         startTrigger = false;
         Log.v(name, "Service is destroyed");
+        unregisterReceiver(nReceiver);
 
         if(fileOpen){
             notiLogger.closeFile(name);
             fileOpen = false;
         }
+        stopSelf();
     }
 
     public void getNotiData(StatusBarNotification sbn, boolean isPosted){
@@ -165,7 +167,14 @@ public class NotificationService extends NotificationListenerService {
         else
             action = "removed";
 
-        textToSave = pack + "," + ticker + "," + title + "," + text + "," + sbText + "," +  action;
+//        textToSave = pack + "," + ticker + "," + title + "," + text + "," + sbText + "," +  action;
+        int contentLen;
+        if(cText == null)
+            contentLen = 0;
+        else
+            contentLen = cText.length();
+        textToSave = pack + "," + ticker + "," + title + "," + contentLen + ","+ action;
+
 
         if(fileOpen)
             notiLogger.writeData(textToSave);

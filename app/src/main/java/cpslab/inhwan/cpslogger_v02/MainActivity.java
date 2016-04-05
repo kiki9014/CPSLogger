@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
     Intent intentApp;
     Intent intentNoti;
     Intent intentGear;
+    Intent intentSig;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,7 @@ public class MainActivity extends Activity {
         intentApp = new Intent(MainActivity.this, RunningAppService.class);
         intentNoti = new Intent(MainActivity.this,NotificationService.class);
         //intentGear = new Intent(MainActivity.this, GearService.class);
+        intentSig = new Intent(MainActivity.this,SignalSensingService.class);
 
         //startService(intentGear);
 
@@ -105,8 +107,9 @@ public class MainActivity extends Activity {
                 stopService(intentWifi);
 //				stopService(intentRec);
                 stopService(intentSoft);
-                //stopService(intentGear);
+//                stopService(intentGear);
                 stopService(intentApp);
+                stopService(intentSig);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
                 i.putExtra("Notification_Event","QUIT");
                 sendBroadcast(i);
@@ -156,6 +159,7 @@ public class MainActivity extends Activity {
                     startService(intentApp);
                     startService(intentNoti);
 //                    startService(intentGear);
+                    startService(intentSig);
 
                     serviceOn = true;
 
@@ -187,6 +191,7 @@ public class MainActivity extends Activity {
                     stopService(intentNoti);
                     stopService(intentApp);
 //                    stopService(intentGear);
+                    stopService(intentSig);
 
                     serviceOn = false;
 
