@@ -20,6 +20,8 @@ public class MovingService extends Service {
     Sensor magSensor;
     SensorEventListener gyrL;
     Sensor gyrSensor;
+    SensorEventListener stepL;
+    Sensor stepSensor;
 
     boolean isStart1;
     int loopCount1;
@@ -30,22 +32,29 @@ public class MovingService extends Service {
     boolean isStart3;
     int loopCount3;
 
+    boolean isStart4;
+    int loopCount4;
+
     String [] acc = new String[3];
     String [] mag = new String[3];
     String [] gyr = new String[3];
+    String stp;
 
     float [] accc = new float[3];
     float [] magg = new float[3];
     float [] gyro = new float[3];
+    float step;
 
     double [] ac = new double[3];
 
     String nameAcc = "Acc";
     String nameGyro = "Gyro";
     String nameMag = "Mag";
+    String nameStep = "Step";
     Logger accLogger = new Logger(nameAcc);
     Logger gyroLogger = new Logger(nameGyro);
     Logger magLogger = new Logger(nameMag);
+    Logger stepLogger = new Logger(nameStep);
     boolean fileOpen;
 
     public void onCreate() {
@@ -63,11 +72,13 @@ public class MovingService extends Service {
         mSm.unregisterListener(accL);
         mSm.unregisterListener(magL);
         mSm.unregisterListener(gyrL);
+        mSm.unregisterListener(stepL);
 
         if (fileOpen) {
             accLogger.closeFile(nameAcc);
             gyroLogger.closeFile(nameGyro);
             magLogger.closeFile(nameMag);
+            stepLogger.closeFile(nameStep);
             fileOpen = false;
         }
 
@@ -78,6 +89,7 @@ public class MovingService extends Service {
     public int onStartCommand (Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         int delay = SensorManager.SENSOR_DELAY_FASTEST;
+        int delay2 = (Integer) SensorManager.SENSOR_DELAY_NORMAL;
 
         accSensor = mSm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         accL = new accListener();
@@ -85,10 +97,14 @@ public class MovingService extends Service {
         magL = new magListener();
         gyrSensor = mSm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         gyrL = new gyrListener();
+        stepSensor = mSm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        stepL = new stepListener();
+
 
         mSm.registerListener(accL, accSensor, delay);
         mSm.registerListener(magL, magSensor, delay);
         mSm.registerListener(gyrL, gyrSensor, delay);
+        mSm.registerListener(stepL,stepSensor, delay2);
 
         isStart1 = true; // indicate it is started
         loopCount1 = 1;
@@ -99,12 +115,16 @@ public class MovingService extends Service {
         isStart3 = true; // indicate it is started
         loopCount3 = 1;
 
+        isStart4 = true;
+        loopCount4 = 1;
+
         Toast.makeText(this, "Mov-Watching is started", Toast.LENGTH_SHORT).show();		//toast message
 
         if(!fileOpen){
             accLogger.createFile(nameAcc);
             gyroLogger.createFile(nameGyro);
             magLogger.createFile(nameMag);
+            stepLogger.createFile(nameStep);
             fileOpen = true;
         }
 
@@ -174,4 +194,19 @@ public class MovingService extends Service {
     }
 
 
+    private class stepListener implements SensorEventListener {
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+        public void onSensorChanged(SensorEvent event) {
+          if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                step = event.values[0];
+                stp = Double.toString(step);
+                Log.d("step", stp);
+                if(fileOpen)
+                    stepLogger.writeData("4," + stp);
+
+//                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
+            }
+        }
+    }
 }

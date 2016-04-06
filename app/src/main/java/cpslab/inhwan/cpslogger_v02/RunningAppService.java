@@ -11,13 +11,21 @@ import android.util.*;
 import android.widget.*;
 
 public class RunningAppService extends Service {
+    static String name = "App";
+
     boolean mQuit;
 
     String pkgbuff;
 
+    static Logger appLogger = new Logger(name);
+
+    static boolean fileOpen;
+
     public void onCreate() {
         super.onCreate();
 //		unregisterRestartAlarm();
+
+        fileOpen = true;
     }
 
     public void onDestroy() {
@@ -25,6 +33,10 @@ public class RunningAppService extends Service {
         mQuit = true;
 //		registerRestartAlarm();
 //		Toast.makeText(this, "App-Watching is ended", 0).show();
+
+        if(fileOpen){
+            appLogger.closeFile(name);
+        }
     }
 
     public int onStartCommand (Intent intent, int flags, int startId) {
@@ -36,6 +48,11 @@ public class RunningAppService extends Service {
         appThread appt = new appThread();
         appt.start();		//start the appThread
         Toast.makeText(this, "App-Watching is started", Toast.LENGTH_SHORT).show(); //modified to Toast.LENGTH_SHORT from 0
+
+        if(!fileOpen){
+            appLogger.createFile(name);
+            fileOpen = true;
+        }
 
         return START_STICKY;
     }
@@ -65,6 +82,8 @@ public class RunningAppService extends Service {
                         pkgbuff = pkgName;
                         Log.i("pkgbuff", pkgbuff);
                         Log.i("pkgNo", Double.toString(procInfos.size()));
+                        String pkgData = "top," + pkgbuff;
+                        appLogger.writeData(pkgData);
                     }
                     else {}
 

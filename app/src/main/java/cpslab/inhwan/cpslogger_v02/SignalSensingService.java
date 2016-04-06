@@ -1,8 +1,15 @@
 package cpslab.inhwan.cpslogger_v02;
 
 import android.app.Service;
+import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import android.telephony.CellInfo;
 import android.telephony.CellLocation;
@@ -23,12 +30,14 @@ public class SignalSensingService extends Service {
     Logger sigLogger = new Logger(name);
 
     boolean fileOpen;
+    boolean logRunning;
 
     MyPhoneState phoneListener;
     TelephonyManager telephony;
 
-    public SignalSensingService() {
-    }
+    BroadcastReceiver broadReceiver;
+
+    bluetoothTh bTh;
 
     @Override
     public void onCreate(){
@@ -36,10 +45,31 @@ public class SignalSensingService extends Service {
         phoneListener = new MyPhoneState();
         telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        telephony.listen(phoneListener, PhoneStateListener.LISTEN_SERVICE_STATE);
-        telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CELL_INFO);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CELL_LOCATION);
+
+        broadReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                    String devAddr = ((BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)).getAddress();
+                    String devName = ((BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)).getName();
+                    int rssi = (int) intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
+
+                    String bluetoothData = "bluetooth " + devAddr + " " + devName + " " + rssi;
+
+                    Log.d(name+"|bluetooth",bluetoothData);
+
+                    sigLogger.writeData(bluetoothData);
+                }
+                else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                    Log.d(name + "|bluetooth", "Discovery end");
+                }
+            }
+        };
+
+        bTh = new bluetoothTh();
 
         fileOpen = true;
     }
@@ -54,6 +84,9 @@ public class SignalSensingService extends Service {
             sigLogger.createFile(name);
             fileOpen = true;
         }
+        logRunning = true;
+
+        bTh.start();
 
         return START_STICKY;		//Sticky n Unsticky: what is the difference?
     }
@@ -68,6 +101,7 @@ public class SignalSensingService extends Service {
             fileOpen = false;
         }
         Log.d(name,"Service Ended");
+        logRunning = false;
     }
 
     @Override
@@ -113,5 +147,36 @@ public class SignalSensingService extends Service {
             sigLogger.writeData(cellLocData);
         }
 
+    }
+
+    private class bluetoothTh extends Thread{
+        BluetoothAdapter bluetooth;
+
+        public bluetoothTh(){
+            if(Build.VERSION.SDK_INT >= 18){
+                BluetoothManager bm = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+                bluetooth = bm.getAdapter();
+            }
+            else
+                bluetooth = BluetoothAdapter.getDefaultAdapter();
+        }
+
+        public void run(){
+            while (logRunning){
+                try{
+                    if(bluetooth.isEnabled()){
+                        getApplicationContext().registerReceiver(broadReceiver,new IntentFilter(BluetoothDevice.ACTION_FOUND));
+                        getApplicationContext().registerReceiver(broadReceiver,new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+
+                        bluetooth.startDiscovery();
+
+                        sleep(5*60*1000);
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

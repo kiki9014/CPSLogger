@@ -75,6 +75,10 @@
             <intent-filter>
                 <action android:name="exam.histLogN.Moving" />
             </intent-filter>
+        </service>
+        <service
+            android:name=".RecordingService"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="exam.histLogN.Recording" />
             </intent-filter>
@@ -152,11 +156,8 @@
 
         <service
             android:name=".SignalSensingService"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-            </intent-filter>
+            android:enabled="true"
+            android:exported="true">
         </service>
     </application>
 
