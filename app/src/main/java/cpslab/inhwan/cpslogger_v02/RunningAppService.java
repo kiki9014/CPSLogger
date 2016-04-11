@@ -17,7 +17,7 @@ public class RunningAppService extends Service {
 
     String pkgbuff;
 
-    static Logger appLogger = new Logger(name);
+    Logger appLogger = new Logger(name);
 
     static boolean fileOpen;
 

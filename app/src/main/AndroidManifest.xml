@@ -157,8 +157,11 @@
         <service
             android:name=".SignalSensingService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"></service>
+        <service
+            android:name=".PhoneStateService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
