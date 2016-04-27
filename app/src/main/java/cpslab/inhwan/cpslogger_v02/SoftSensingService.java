@@ -239,7 +239,7 @@ public class SoftSensingService extends Service {
                             Log.i("histurl", url);
                     if(fileOpen){
                         histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        histLogger.writeData("histURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        histLogger.writeData("histURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
                     }
 
                     histCur.moveToNext();
@@ -300,7 +300,7 @@ public class SoftSensingService extends Service {
                             Log.i("bookurl", url);
                     if(fileOpen){
                         bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        bookLogger.writeData("bookURL,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                        bookLogger.writeData("bookURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
                     }
 
                     bookCur.moveToNext();

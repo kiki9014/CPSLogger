@@ -11,7 +11,7 @@ public class ServiceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "ServiceReceiver->onReceive();");
-        MyPhoneStateListener phoneListener = new MyPhoneStateListener();
+        MyPhoneStateListener phoneListener = new MyPhoneStateListener(context);
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);

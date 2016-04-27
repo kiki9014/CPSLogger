@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 
         ContentResolver contentResolver = this.getContentResolver();
         String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
-        if(enabledNoti.contains(this.getPackageName())){
+        if(enabledNoti != null && enabledNoti.contains(this.getPackageName())){
             Log.d("main","Already Set");
         }
         else{

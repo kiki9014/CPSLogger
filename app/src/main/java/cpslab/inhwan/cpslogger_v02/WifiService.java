@@ -75,6 +75,7 @@ public class WifiService extends Service {
                     List<ScanResult> configs = mWifiMan.getScanResults();
                     sb = new StringBuilder();
                     sbOrigin = new StringBuilder();
+                    sb.append(configs.size());
                     for(int i = 0; i < configs.size(); i++) {
                         String BSSID = configs.get(i).BSSID;
                         String SSID = configs.get(i).SSID;
