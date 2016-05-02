@@ -108,6 +108,13 @@ public class NotificationService extends NotificationListenerService {
 
         notiLogger.writeData("Notification Listen Service is started");
 
+        IntentFilter iF = new IntentFilter();
+        iF.addAction("com.android.music.metachanged");
+        iF.addAction("com.android.music.playstatechanged");
+        iF.addAction("com.android.music.playbackcomplete");
+        iF.addAction("com.android.music.queuechanged");
+        registerReceiver(mMReceiver,iF);
+
         return START_NOT_STICKY;
     }
 
@@ -384,4 +391,24 @@ public class NotificationService extends NotificationListenerService {
             return sb.toString();
         }
     }
+
+    boolean isMassenger(String packageName){
+        if(packageName.equals("com.kakao.talk"))
+            return true;
+        else
+            return false;
+    }
+
+    private BroadcastReceiver mMReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            String cmd = intent.getStringExtra("command");
+            Log.d("mReceiver.onReceive ", action + " / " + cmd);
+            String artist = intent.getStringExtra("artist");
+            String album = intent.getStringExtra("album");
+            String track = intent.getStringExtra("track");
+            Log.d("Music",artist+":"+album+":"+track);
+        }
+    };
 }

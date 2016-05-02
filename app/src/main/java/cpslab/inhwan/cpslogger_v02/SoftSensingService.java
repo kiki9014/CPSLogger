@@ -438,7 +438,7 @@ public class SoftSensingService extends Service {
 //						Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
 //					}
 
-                    sleep(0);
+                    sleep(100000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

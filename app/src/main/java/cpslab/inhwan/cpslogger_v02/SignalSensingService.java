@@ -170,7 +170,11 @@ public class SignalSensingService extends Service {
 
                         bluetooth.startDiscovery();
 
-                        sleep(5*60*1000);
+                        sleep(600000);
+                    }
+                    else{
+                        Log.d("BLUETOOTH","Bluetooth is not enabled");
+                        sleep(600000);
                     }
                 }
                 catch (Exception e){

@@ -91,7 +91,7 @@ public class RunningAppService extends Service {
                     //	{
                     //		tv.setText(tv.getText().toString()+procInfos.get(i).pid+", "+procInfos.get(i).processName+"\n");
                     //	}
-                    sleep(0);
+                    sleep(100000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

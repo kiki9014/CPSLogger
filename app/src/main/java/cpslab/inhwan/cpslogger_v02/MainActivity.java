@@ -115,19 +115,25 @@ public class MainActivity extends Activity {
                 stopService(intentNoti);
                 stopService(intentPhone);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
-                i.putExtra("Notification_Event","QUIT");
+                i.putExtra("Notification_Event", "QUIT");
                 sendBroadcast(i);
 
                 // remove the notification
                 nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                 nm.cancel(1234);
-
                 // not necessary maybe...
                 if(mWakeLock != null) {
                     mWakeLock.release();
                     mWakeLock = null;
                     Log.i("mWakeLock", "off");
                 }
+            }
+        });
+
+        Button btnexit = (Button)findViewById(R.id.exit);
+        btnexit.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                MainActivity.this.finishAffinity();
             }
         });
     }

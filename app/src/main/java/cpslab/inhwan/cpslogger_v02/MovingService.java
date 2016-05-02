@@ -16,8 +16,8 @@ public class MovingService extends Service {
     SensorManager mSm;
     SensorEventListener accL;
     Sensor accSensor;
-    SensorEventListener magL;
-    Sensor magSensor;
+//    SensorEventListener magL;
+//    Sensor magSensor;
     SensorEventListener gyrL;
     Sensor gyrSensor;
     SensorEventListener stepL;
@@ -36,12 +36,12 @@ public class MovingService extends Service {
     int loopCount4;
 
     String [] acc = new String[3];
-    String [] mag = new String[3];
+//    String [] mag = new String[3];
     String [] gyr = new String[3];
     String stp;
 
     float [] accc = new float[3];
-    float [] magg = new float[3];
+//    float [] magg = new float[3];
     float [] gyro = new float[3];
     float step;
 
@@ -49,11 +49,11 @@ public class MovingService extends Service {
 
     String nameAcc = "Acc";
     String nameGyro = "Gyro";
-    String nameMag = "Mag";
+//    String nameMag = "Mag";
     String nameStep = "Step";
     Logger accLogger = new Logger(nameAcc);
     Logger gyroLogger = new Logger(nameGyro);
-    Logger magLogger = new Logger(nameMag);
+//    Logger magLogger = new Logger(nameMag);
     Logger stepLogger = new Logger(nameStep);
     boolean fileOpen;
 
@@ -70,14 +70,14 @@ public class MovingService extends Service {
         super.onDestroy();
 
         mSm.unregisterListener(accL);
-        mSm.unregisterListener(magL);
+//        mSm.unregisterListener(magL);
         mSm.unregisterListener(gyrL);
         mSm.unregisterListener(stepL);
 
         if (fileOpen) {
             accLogger.closeFile(nameAcc);
             gyroLogger.closeFile(nameGyro);
-            magLogger.closeFile(nameMag);
+//            magLogger.closeFile(nameMag);
             stepLogger.closeFile(nameStep);
             fileOpen = false;
         }
@@ -93,8 +93,8 @@ public class MovingService extends Service {
 
         accSensor = mSm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         accL = new accListener();
-        magSensor = mSm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        magL = new magListener();
+//        magSensor = mSm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+//        magL = new magListener();
         gyrSensor = mSm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         gyrL = new gyrListener();
         stepSensor = mSm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -102,7 +102,7 @@ public class MovingService extends Service {
 
 
         mSm.registerListener(accL, accSensor, delay);
-        mSm.registerListener(magL, magSensor, delay);
+//        mSm.registerListener(magL, magSensor, delay);
         mSm.registerListener(gyrL, gyrSensor, delay);
         mSm.registerListener(stepL,stepSensor, delay2);
 
@@ -123,7 +123,7 @@ public class MovingService extends Service {
         if(!fileOpen){
             accLogger.createFile(nameAcc);
             gyroLogger.createFile(nameGyro);
-            magLogger.createFile(nameMag);
+//            magLogger.createFile(nameMag);
             stepLogger.createFile(nameStep);
             fileOpen = true;
         }
@@ -174,24 +174,24 @@ public class MovingService extends Service {
         }
     }
 
-    private class magListener implements SensorEventListener {
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-        public void onSensorChanged(SensorEvent event) {
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {}
-            else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-                magg = event.values;
-                mag[0] = Double.toString(magg[0]);
-                mag[1] = Double.toString(magg[1]);
-                mag[2] = Double.toString(magg[2]);
-//                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
-                if(fileOpen)
-                    magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
-
-//                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
-            }
-        }
-    }
+//    private class magListener implements SensorEventListener {
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//        }
+//        public void onSensorChanged(SensorEvent event) {
+//            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {}
+//            else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+//                magg = event.values;
+//                mag[0] = Double.toString(magg[0]);
+//                mag[1] = Double.toString(magg[1]);
+//                mag[2] = Double.toString(magg[2]);
+////                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
+//                if(fileOpen)
+//                    magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
+//
+////                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
+//            }
+//        }
+//    }
 
 
     private class stepListener implements SensorEventListener {
