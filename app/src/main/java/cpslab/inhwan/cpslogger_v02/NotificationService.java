@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class NotificationService extends NotificationListenerService {
@@ -46,6 +48,8 @@ public class NotificationService extends NotificationListenerService {
 
     static boolean fileOpen;
 
+    List<String> senderList = new ArrayList<String>();
+
     @Override
     public void onCreate(){
         super.onCreate();
@@ -59,9 +63,10 @@ public class NotificationService extends NotificationListenerService {
 //
         smsMan = new IncomingSms();
         mmsMan = new IncomingMMS();
-//        IntentFilter intentFilterSMS = new IntentFilter();
-//        intentFilterSMS.addAction("cpslab.inhwan.cpslogger_v02.NotificationService");
-//        registerReceiver(smsMan,intentFilterSMS);
+        IntentFilter intentFilterSMS = new IntentFilter();
+        intentFilterSMS.addAction("cpslab.inhwan.cpslogger_v02.NotificationService");
+        registerReceiver(smsMan, intentFilterSMS);
+        registerReceiver(mmsMan,intentFilterSMS);
 
         startTrigger = false;
         fileOpen = true;
@@ -144,18 +149,36 @@ public class NotificationService extends NotificationListenerService {
         CharSequence cText = extras.getCharSequence("android.text");
         CharSequence cSbText = extras.getCharSequence("android.subtext");
 
+        String titleStr, textStr;
+        if(cTitle == null)
+            titleStr = "";
+        else
+            titleStr = cTitle.toString();
+        if(cText == null)
+            textStr = "";
+        else
+            textStr = cText.toString();
+
+        if(isMassenger(sbn.getPackageName())){
+            if(!senderList.contains(cTitle.toString())){
+                senderList.add(cTitle.toString());
+            }
+            titleStr = Integer.toString(senderList.indexOf(cTitle.toString()));
+            textStr = Integer.toString(cText.length());
+        }
+
         if(tickerSQ == null)
             ticker = "null";
         else
             ticker = Base64.encodeToString(tickerSQ.toString().getBytes(), Base64.NO_WRAP);
-        if(cTitle == null)
+        if(titleStr.length() == 0)
             title = "null";
         else
-            title = Base64.encodeToString(cTitle.toString().getBytes(), Base64.NO_WRAP);
-        if(cText == null)
+            title = Base64.encodeToString(titleStr.getBytes(), Base64.NO_WRAP);
+        if(textStr.length() == 0)
             text = "null";
         else
-            text = Base64.encodeToString(cText.toString().getBytes(),Base64.NO_WRAP);
+            text = Base64.encodeToString(textStr.getBytes(),Base64.NO_WRAP);
         if(cSbText == null)
             sbText = "null";
         else
@@ -209,6 +232,7 @@ public class NotificationService extends NotificationListenerService {
 
     public static class IncomingSms extends BroadcastReceiver{
         final SmsManager sms  = SmsManager.getDefault();
+        static List<String> smsList = new ArrayList<String>();
 
         @Override
         public void onReceive(Context context, Intent intent){
@@ -222,7 +246,13 @@ public class NotificationService extends NotificationListenerService {
                         SmsMessage currMessage = SmsMessage.createFromPdu((byte[]) pdus);
 
                         String phoneNumber = currMessage.getDisplayOriginatingAddress();
-                        String sendNumber = phoneNumber;
+                        if(!smsList.contains(phoneNumber)){
+                            smsList.add(phoneNumber);
+                            Log.d("SMSReceive", phoneNumber + "is new.");
+                        }
+                        else
+                            Log.d("SMSReceive",phoneNumber + "exists.");
+                        String sendNumber = Integer.toString(smsList.indexOf(phoneNumber));
                         String message = currMessage.getDisplayMessageBody();
 
                         Log.i("SMSReceive", "From : " + sendNumber + ", Message : " + message);
@@ -242,6 +272,7 @@ public class NotificationService extends NotificationListenerService {
 
     public static class IncomingMMS extends BroadcastReceiver{
         private Context _context;
+        static List<String> mmsList = new ArrayList<String>();
 
         @Override
         public void onReceive(Context $context, final Intent $intent)
@@ -277,9 +308,13 @@ public class NotificationService extends NotificationListenerService {
             String id = cursor.getString(cursor.getColumnIndex("_id"));
             cursor.close();
 
-            String number = parseNumber(id);
+            String mmsNumber = parseNumber(id);
+            if(!mmsList.contains(mmsNumber))
+                mmsList.add(mmsNumber);
+            String number = Integer.toString(mmsList.indexOf(mmsNumber));
             String msg = parseMessage(id);
             Log.i("MMSReceiver", "|" + number + "|" + msg);
+            msg = Integer.toString(msg.length());
             String text2Save = "MMS,"+Base64.encodeToString(number.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(msg.getBytes(),Base64.NO_WRAP);
 
             if(fileOpen){
@@ -393,7 +428,7 @@ public class NotificationService extends NotificationListenerService {
     }
 
     boolean isMassenger(String packageName){
-        if(packageName.equals("com.kakao.talk"))
+        if(packageName.equals("com.kakao.talk") | packageName.equals("jp.naver.line.android") | packageName.equals("com.Slack"))
             return true;
         else
             return false;

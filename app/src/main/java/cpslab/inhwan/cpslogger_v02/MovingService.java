@@ -16,32 +16,32 @@ public class MovingService extends Service {
     SensorManager mSm;
     SensorEventListener accL;
     Sensor accSensor;
-//    SensorEventListener magL;
-//    Sensor magSensor;
+    SensorEventListener magL;
+    Sensor magSensor;
     SensorEventListener gyrL;
     Sensor gyrSensor;
     SensorEventListener stepL;
     Sensor stepSensor;
 
-    boolean isStart1;
-    int loopCount1;
+    boolean isStart1, isUnrel1;
+    int loopCount1, cntUnrel1;
 
-    boolean isStart2;
-    int loopCount2;
+    boolean isStart2, isUnrel2;
+    int loopCount2, cntUnrel2;
 
-    boolean isStart3;
-    int loopCount3;
+    boolean isStart3, isUnrel3;
+    int loopCount3, cntUnrel3;
 
-    boolean isStart4;
-    int loopCount4;
+    boolean isStart4, isUnrel4;
+    int loopCount4, cntUnrel4;
 
     String [] acc = new String[3];
-//    String [] mag = new String[3];
+    String [] mag = new String[3];
     String [] gyr = new String[3];
     String stp;
 
     float [] accc = new float[3];
-//    float [] magg = new float[3];
+    float [] magg = new float[3];
     float [] gyro = new float[3];
     float step;
 
@@ -49,11 +49,11 @@ public class MovingService extends Service {
 
     String nameAcc = "Acc";
     String nameGyro = "Gyro";
-//    String nameMag = "Mag";
+    String nameMag = "Mag";
     String nameStep = "Step";
     Logger accLogger = new Logger(nameAcc);
     Logger gyroLogger = new Logger(nameGyro);
-//    Logger magLogger = new Logger(nameMag);
+    Logger magLogger = new Logger(nameMag);
     Logger stepLogger = new Logger(nameStep);
     boolean fileOpen;
 
@@ -70,14 +70,14 @@ public class MovingService extends Service {
         super.onDestroy();
 
         mSm.unregisterListener(accL);
-//        mSm.unregisterListener(magL);
+        mSm.unregisterListener(magL);
         mSm.unregisterListener(gyrL);
         mSm.unregisterListener(stepL);
 
         if (fileOpen) {
             accLogger.closeFile(nameAcc);
             gyroLogger.closeFile(nameGyro);
-//            magLogger.closeFile(nameMag);
+            magLogger.closeFile(nameMag);
             stepLogger.closeFile(nameStep);
             fileOpen = false;
         }
@@ -93,8 +93,8 @@ public class MovingService extends Service {
 
         accSensor = mSm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         accL = new accListener();
-//        magSensor = mSm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-//        magL = new magListener();
+        magSensor = mSm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        magL = new magListener();
         gyrSensor = mSm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         gyrL = new gyrListener();
         stepSensor = mSm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -102,7 +102,7 @@ public class MovingService extends Service {
 
 
         mSm.registerListener(accL, accSensor, delay);
-//        mSm.registerListener(magL, magSensor, delay);
+        mSm.registerListener(magL, magSensor, delay);
         mSm.registerListener(gyrL, gyrSensor, delay);
         mSm.registerListener(stepL,stepSensor, delay2);
 
@@ -123,12 +123,17 @@ public class MovingService extends Service {
         if(!fileOpen){
             accLogger.createFile(nameAcc);
             gyroLogger.createFile(nameGyro);
-//            magLogger.createFile(nameMag);
+            magLogger.createFile(nameMag);
             stepLogger.createFile(nameStep);
             fileOpen = true;
         }
 
         return START_STICKY;		//Sticky & Unsticky: what is the difference?
+    }
+
+    public void makeToast(String contentStr){
+
+        Toast.makeText(this, contentStr, Toast.LENGTH_SHORT).show();		//toast message
     }
 
     public IBinder onBind(Intent intent) {
@@ -139,8 +144,22 @@ public class MovingService extends Service {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
         public void onSensorChanged(SensorEvent event) {
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {}
-            else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+                if(isUnrel1){
+                    cntUnrel1++;
+                    if(cntUnrel1>100){
+                        cntUnrel1 = 0;
+                        makeToast("Acc has got 100 unreliable data");
+                        Log.d("Magnet", "unreliable value is collected");
+                    }
+                }
+                else{
+                    isUnrel1 = true;
+                }
+            }
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                isUnrel1 = false;
+                cntUnrel1 = 0;
                 accc = event.values;
 
                 acc[0] = Double.toString(accc[0]);
@@ -159,8 +178,22 @@ public class MovingService extends Service {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
         public void onSensorChanged(SensorEvent event) {
-            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {}
-            else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+                if(isUnrel2){
+                    cntUnrel2++;
+                    if(cntUnrel2>100){
+                        cntUnrel2 = 0;
+                        makeToast("Gyro has got 100 unreliable data");
+                        Log.d("Magnet", "unreliable value is collected");
+                    }
+                }
+                else{
+                    isUnrel2 = true;
+                }
+            }
+            if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                isUnrel2 = false;
+                cntUnrel2 = 0;
                 gyro = event.values;
                 gyr[0] = Double.toString(gyro[0]);
                 gyr[1] = Double.toString(gyro[1]);
@@ -174,24 +207,38 @@ public class MovingService extends Service {
         }
     }
 
-//    private class magListener implements SensorEventListener {
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//        }
-//        public void onSensorChanged(SensorEvent event) {
-//            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {}
-//            else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-//                magg = event.values;
-//                mag[0] = Double.toString(magg[0]);
-//                mag[1] = Double.toString(magg[1]);
-//                mag[2] = Double.toString(magg[2]);
-////                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
-//                if(fileOpen)
-//                    magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
-//
-////                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
-//            }
-//        }
-//    }
+    private class magListener implements SensorEventListener {
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+        public void onSensorChanged(SensorEvent event) {
+            if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
+                if(isUnrel3){
+                    cntUnrel3++;
+                    if(cntUnrel3>100){
+                        cntUnrel3 = 0;
+                        makeToast("Mag has got 100 unreliable data");
+                        Log.d("Magnet", "unreliable value is collected");
+                    }
+                }
+                else{
+                    isUnrel3 = true;
+                }
+            }
+            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                isUnrel3 = false;
+                cntUnrel3 = 0;
+                magg = event.values;
+                mag[0] = Double.toString(magg[0]);
+                mag[1] = Double.toString(magg[1]);
+                mag[2] = Double.toString(magg[2]);
+//                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
+                if(fileOpen)
+                    magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
+
+//                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
+            }
+        }
+    }
 
 
     private class stepListener implements SensorEventListener {
