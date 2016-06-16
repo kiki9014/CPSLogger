@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         intentLoc = new Intent(MainActivity.this, LocationService.class);
         intentMov = new Intent(MainActivity.this, MovingService.class);
         intentWifi = new Intent(MainActivity.this, WifiService.class);
-//		intentRec = new Intent(MainActivity.this, RecordingService.class);
+		intentRec = new Intent(MainActivity.this, RecordingService.class);
         intentSoft = new Intent(MainActivity.this, SoftSensingService.class);
         intentApp = new Intent(MainActivity.this, RunningAppService.class);
         intentNoti = new Intent(MainActivity.this,NotificationService.class);
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
                 stopService(intentLoc);
                 stopService(intentMov);
                 stopService(intentWifi);
-//				stopService(intentRec);
+				stopService(intentRec);
                 stopService(intentSoft);
 //                stopService(intentGear);
                 stopService(intentApp);
@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
                     startService(intentLoc);
                     startService(intentMov);
                     startService(intentWifi);
-//					startService(intentRec);
+					startService(intentRec);
                     startService(intentSoft);
                     startService(intentApp);
                     startService(intentNoti);
@@ -197,7 +197,7 @@ public class MainActivity extends Activity {
                     stopService(intentLoc);
                     stopService(intentMov);
                     stopService(intentWifi);
-//					stopService(intentRec);
+					stopService(intentRec);
                     stopService(intentSoft);
                     stopService(intentNoti);
                     stopService(intentApp);

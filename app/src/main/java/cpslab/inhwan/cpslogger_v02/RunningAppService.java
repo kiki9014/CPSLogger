@@ -71,10 +71,13 @@ public class RunningAppService extends Service {
                     ActivityManager activityManager = (ActivityManager)getSystemService( ACTIVITY_SERVICE );
                     List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
 
-                    List<ActivityManager.RunningTaskInfo> taskInfos = activityManager.getRunningTasks(1);
+//                    List<ActivityManager.RunningTaskInfo> taskInfos = activityManager.getRunningTasks(1);
 
-                    ComponentName topActivity = taskInfos.get(0).topActivity;
-                    String pkgName = topActivity.getPackageName();
+//                    ComponentName topActivity = taskInfos.get(0).topActivity;
+//                    String pkgName = topActivity.getPackageName();
+
+                    Log.d("RunningProcess", procInfos.get(0).processName);
+                    String pkgName = procInfos.get(0).processName;
 //                    Log.i("pkgName", pkgName);
 
                     if(pkgName.compareTo(pkgbuff) != 0 ) {
@@ -91,7 +94,7 @@ public class RunningAppService extends Service {
                     //	{
                     //		tv.setText(tv.getText().toString()+procInfos.get(i).pid+", "+procInfos.get(i).processName+"\n");
                     //	}
-                    sleep(100000);
+                    sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -19,6 +19,8 @@ public class RecordingService extends Service {
     MediaRecorder mRecorder = null;
     String sd = Environment.getExternalStorageDirectory().getAbsolutePath();
 
+    boolean isPaused = false;
+
     public void onCreate() {
         super.onCreate();
     }
@@ -31,8 +33,33 @@ public class RecordingService extends Service {
     public int onStartCommand (Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
+        startRecord();
+
+        Toast.makeText(this, "Recording is started", Toast.LENGTH_SHORT).show();
+
+        return START_STICKY;
+    }
+
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    public class broadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent){
+            boolean data = intent.getBooleanExtra("requestPause", false);
+
+            if(isPaused && !data)
+                startRecord();
+            else if(!isPaused && data)
+                stopRecord();
+        }
+    }
+
+    private void startRecord(){
+
         Calendar calendar = Calendar.getInstance();
-        String sd = Environment.getExternalStorageDirectory().getAbsolutePath();
+        sd = Environment.getExternalStorageDirectory().getAbsolutePath();
         String Path = sd + "/" + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s" + ".3gp";
         if (mRecorder == null) {
             mRecorder = new MediaRecorder();
@@ -52,15 +79,12 @@ public class RecordingService extends Service {
             e.printStackTrace();
         }
         mRecorder.start();
-
-        Toast.makeText(this, "Recording is started", Toast.LENGTH_SHORT).show();
-
-        return START_STICKY;
+        isPaused = false;
     }
 
-    public IBinder onBind(Intent intent) {
-        return null;
+    private void stopRecord(){
+        mRecorder.stop();
+        mRecorder.reset();
+        isPaused = true;
     }
-
-
 }
