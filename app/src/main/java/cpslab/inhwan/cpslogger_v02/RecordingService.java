@@ -12,6 +12,7 @@ import android.content.*;
 import android.media.*;
 import android.os.*;
 import android.telephony.*;
+import android.util.Log;
 import android.widget.*;
 
 public class RecordingService extends Service {
@@ -60,7 +61,15 @@ public class RecordingService extends Service {
 
         Calendar calendar = Calendar.getInstance();
         sd = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String Path = sd + "/" + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s" + ".3gp";
+
+        File dir = new File(sd + "/CPSLogger/recorded");
+        if(!dir.exists()){
+            dir.mkdirs();
+            Log.i("record", "Directory is created");
+        }
+        else
+            Log.i("record", "Directory is already exist");
+        String Path = sd + "/CPSLogger/recorded/" + calendar.get(Calendar.MONTH) + "M" + calendar.get(Calendar.DAY_OF_MONTH) + "d" + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s" + ".3gp";
         if (mRecorder == null) {
             mRecorder = new MediaRecorder();
         } else {

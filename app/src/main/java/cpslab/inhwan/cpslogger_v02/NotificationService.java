@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,25 +21,30 @@ import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Objects;
 
 public class NotificationService extends NotificationListenerService {
     Context context;
 
     boolean startTrigger;
-    static String name = "Notification";
+    String name = "Notification";
 
-    static Logger notiLogger = new Logger(name);
+    Logger notiLogger = new Logger(name);
 
     broadcastReceiver nReceiver;
     IncomingSms smsMan;
@@ -48,7 +52,11 @@ public class NotificationService extends NotificationListenerService {
 
     static boolean fileOpen;
 
-    List<String> senderList = new ArrayList<String>();
+//    File tableFile = new File(context.getFilesDir(), "HashTable.txt");
+
+    Hashtable<String, Integer> senderList;
+    Hashtable<String, Integer> mmsList;
+    Hashtable<String, Integer> smsList;
 
     @Override
     public void onCreate(){
@@ -65,8 +73,23 @@ public class NotificationService extends NotificationListenerService {
         mmsMan = new IncomingMMS();
         IntentFilter intentFilterSMS = new IntentFilter();
         intentFilterSMS.addAction("cpslab.inhwan.cpslogger_v02.NotificationService");
+        intentFilterSMS.addAction("android.provider.Telephony.SMS_RECEIVED");
+        IntentFilter intentFilterMMS = new IntentFilter();
+        try{
+            intentFilterMMS.addAction("cpslab.inhwan.cpslogger_v02.NotificationService");
+            intentFilterMMS.addAction("android.provider.Telephony.MMS_RECEIVED");
+            intentFilterMMS.addAction("android.provider.Telephony.WAP_PUSH_RECEIVED");
+            intentFilterMMS.addDataType("application/vnd.wap.mms-message");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         registerReceiver(smsMan, intentFilterSMS);
-        registerReceiver(mmsMan,intentFilterSMS);
+        registerReceiver(mmsMan, intentFilterMMS);
+
+        senderList = importHashTable("Notification");
+        mmsList = importHashTable("MMS");
+        smsList = importHashTable("SMS");
 
         startTrigger = false;
         fileOpen = true;
@@ -123,20 +146,47 @@ public class NotificationService extends NotificationListenerService {
         return START_NOT_STICKY;
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public void quitFunc(){
         Log.v(name, "Service will be destroyed");
 
         startTrigger = false;
         Log.v(name, "Service is destroyed");
         unregisterReceiver(nReceiver);
+        unregisterReceiver(mMReceiver);
+        unregisterReceiver(smsMan);
+        unregisterReceiver(mmsMan);
 
         if(fileOpen){
             notiLogger.closeFile(name);
             fileOpen = false;
         }
+        exportHashTable(senderList,"Notification");
+        exportHashTable(mmsList, "MMS");
+        exportHashTable(smsList, "SMS");
+
+        Toast.makeText(this,"NotificationCollecting is Ended",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy(){
+        Log.v(name, "Service will be destroyed");
+
+        startTrigger = false;
+        Log.v(name, "Service is destroyed");
+        unregisterReceiver(nReceiver);
+        unregisterReceiver(mMReceiver);
+        unregisterReceiver(smsMan);
+        unregisterReceiver(mmsMan);
+
+        if(fileOpen){
+            notiLogger.closeFile(name);
+            fileOpen = false;
+        }
+        exportHashTable(senderList,"Notification");
+        exportHashTable(mmsList, "MMS");
+        exportHashTable(smsList, "SMS");
         stopSelf();
+        super.onDestroy();
     }
 
     public void getNotiData(StatusBarNotification sbn, boolean isPosted){
@@ -160,10 +210,10 @@ public class NotificationService extends NotificationListenerService {
             textStr = cText.toString();
 
         if(isMassenger(sbn.getPackageName())){
-            if(!senderList.contains(cTitle.toString())){
-                senderList.add(cTitle.toString());
+            if(!senderList.containsKey(cTitle.toString())){
+                senderList.put(cTitle.toString(),senderList.size());
             }
-            titleStr = Integer.toString(senderList.indexOf(cTitle.toString()));
+            titleStr = Integer.toString(senderList.get(cTitle.toString()));
             textStr = Integer.toString(cText.length());
         }
 
@@ -214,8 +264,10 @@ public class NotificationService extends NotificationListenerService {
         @Override
         public void onReceive(Context context, Intent intent){
             String cmd = intent.getStringExtra("Notification_Event");
+            Log.d("NotificationBR", cmd);
             if(cmd.equals("QUIT")){
                 stopSelf();
+                quitFunc();
                 if(fileOpen){
                     notiLogger.closeFile(name);
                     fileOpen = false;
@@ -230,9 +282,12 @@ public class NotificationService extends NotificationListenerService {
         return mBinder;
     }
 
-    public static class IncomingSms extends BroadcastReceiver{
+    public class IncomingSms extends BroadcastReceiver{
         final SmsManager sms  = SmsManager.getDefault();
-        static List<String> smsList = new ArrayList<String>();
+
+        public IncomingSms(){
+
+        }
 
         @Override
         public void onReceive(Context context, Intent intent){
@@ -246,13 +301,13 @@ public class NotificationService extends NotificationListenerService {
                         SmsMessage currMessage = SmsMessage.createFromPdu((byte[]) pdus);
 
                         String phoneNumber = currMessage.getDisplayOriginatingAddress();
-                        if(!smsList.contains(phoneNumber)){
-                            smsList.add(phoneNumber);
+                        if(!smsList.containsKey(phoneNumber)){
+                            smsList.put(phoneNumber,smsList.size());
                             Log.d("SMSReceive", phoneNumber + "is new.");
                         }
                         else
                             Log.d("SMSReceive",phoneNumber + "exists.");
-                        String sendNumber = Integer.toString(smsList.indexOf(phoneNumber));
+                        String sendNumber = Integer.toString(smsList.get(phoneNumber));
                         String message = currMessage.getDisplayMessageBody();
 
                         Log.i("SMSReceive", "From : " + sendNumber + ", Message : " + message);
@@ -270,9 +325,12 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
-    public static class IncomingMMS extends BroadcastReceiver{
+    public class IncomingMMS extends BroadcastReceiver{
         private Context _context;
-        static List<String> mmsList = new ArrayList<String>();
+
+        public IncomingMMS(){
+
+        }
 
         @Override
         public void onReceive(Context $context, final Intent $intent)
@@ -309,9 +367,9 @@ public class NotificationService extends NotificationListenerService {
             cursor.close();
 
             String mmsNumber = parseNumber(id);
-            if(!mmsList.contains(mmsNumber))
-                mmsList.add(mmsNumber);
-            String number = Integer.toString(mmsList.indexOf(mmsNumber));
+            if(!mmsList.containsKey(mmsNumber))
+                mmsList.put(mmsNumber,mmsList.size());
+            String number = Integer.toString(mmsList.get(mmsNumber));
             String msg = parseMessage(id);
             Log.i("MMSReceiver", "|" + number + "|" + msg);
             msg = Integer.toString(msg.length());
@@ -446,4 +504,43 @@ public class NotificationService extends NotificationListenerService {
             Log.d("Music",artist+":"+album+":"+track);
         }
     };
+
+    public Hashtable<String, Integer> importHashTable(String name){
+        Hashtable<String, Integer> hashT;
+        try{
+            FileInputStream fileInputStream = openFileInput(name);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            hashT = (Hashtable<String, Integer>) objectInputStream.readObject();
+            objectInputStream.close();
+
+            return hashT;
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+
+        hashT = new Hashtable<>();
+        return hashT;
+    }
+
+    public void exportHashTable(Hashtable<String, Integer> hashT, String name){
+        try{
+            FileOutputStream fileOutputStream = openFileOutput(name, MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(hashT);
+            objectOutputStream.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }
