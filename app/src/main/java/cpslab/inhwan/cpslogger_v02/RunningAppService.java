@@ -76,15 +76,15 @@ public class RunningAppService extends Service {
 //                    ComponentName topActivity = taskInfos.get(0).topActivity;
 //                    String pkgName = topActivity.getPackageName();
 
-                    Log.d("RunningProcess", procInfos.get(0).processName);
+//                    Log.d("RunningProcess", procInfos.get(0).processName);
                     String pkgName = procInfos.get(0).processName;
 //                    Log.i("pkgName", pkgName);
 
                     if(pkgName.compareTo(pkgbuff) != 0 ) {
 //                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");
                         pkgbuff = pkgName;
-                        Log.i("pkgbuff", pkgbuff);
-                        Log.i("pkgNo", Double.toString(procInfos.size()));
+//                        Log.i("pkgbuff", pkgbuff);
+//                        Log.i("pkgNo", Double.toString(procInfos.size()));
                         String pkgData = "top," + pkgbuff;
                         appLogger.writeData(pkgData);
                     }

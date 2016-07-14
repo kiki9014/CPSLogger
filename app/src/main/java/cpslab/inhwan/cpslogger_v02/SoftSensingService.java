@@ -167,7 +167,7 @@ public class SoftSensingService extends Service {
 
                 clipTxt = item.toString();
 
-                Log.i("clipboard", clipTxt);
+//                Log.i("clipboard", clipTxt);
                 if(fileOpen)
                     clipLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
             }
@@ -235,8 +235,8 @@ public class SoftSensingService extends Service {
                     url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
 //							url = histCur.getString(histCur.getColumnIndex("URL"));
                     // Do something with title and url
-                            Log.i("histtitle", title);
-                            Log.i("histurl", url);
+//                            Log.i("histtitle", title);
+//                            Log.i("histurl", url);
                     if(fileOpen){
                         histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                         histLogger.writeData("histURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
@@ -296,8 +296,8 @@ public class SoftSensingService extends Service {
                     // Do something with title and url
 
                     String book = Base64.encodeToString(title.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP);
-                            Log.i("booktitle", title);
-                            Log.i("bookurl", url);
+//                            Log.i("booktitle", title);
+//                            Log.i("bookurl", url);
                     if(fileOpen){
                         bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                         bookLogger.writeData("bookURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
@@ -363,8 +363,8 @@ public class SoftSensingService extends Service {
                     // Do something with date and search(keyword)
 
                     key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
-                            Log.i("date", date);
-                            Log.i("search", search);
+//                            Log.i("date", date);
+//                            Log.i("search", search);
                     if(fileOpen){
                         keyLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
                         keyLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
@@ -454,7 +454,7 @@ public class SoftSensingService extends Service {
                 try {
                     activityManager.getMemoryInfo(mi);
                     availableMems = mi.availMem / 1048576L;
-                    Log.i("AvailMem", Long.toString(availableMems));
+//                    Log.i("AvailMem", Long.toString(availableMems));
                     if(fileOpen)
                         memLogger.writeData("AvaliMem,"+Long.toString(availableMems));
 
