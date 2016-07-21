@@ -11,6 +11,12 @@ import android.widget.*;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MainActivity extends Activity {
 
     NotificationManager nm;
@@ -63,6 +69,15 @@ public class MainActivity extends Activity {
         intentSig = new Intent(MainActivity.this,SignalSensingService.class);
         intentPhone = new Intent(MainActivity.this,PhoneStateService.class);
 
+        try {
+            Calendar calendar = Calendar.getInstance();
+            File logfile= new File(Environment.getExternalStorageDirectory()+"/CPSLogger/logfile_" + new SimpleDateFormat("yyyy_MM_dd").format(new Date()) + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s.txt");
+            logfile.createNewFile();
+            String cmd = "logcat -d -f "+logfile.getAbsolutePath();
+            Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //startService(intentGear);
 
         ContentResolver contentResolver = this.getContentResolver();
@@ -118,6 +133,20 @@ public class MainActivity extends Activity {
                 i.putExtra("Notification_Event", "QUIT");
                 Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
                 startActivity(settingNoti);
+
+                ContentResolver contentResolver = MainActivity.this.getContentResolver();
+                String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
+                while(enabledNoti != null && enabledNoti.contains(MainActivity.this.getPackageName())){
+//                    Log.d("main","Already Set");
+                    Log.d("main", "Not disabled : " + enabledNoti.contains(MainActivity.this.getPackageName()));
+                    try {
+                        SystemClock.sleep(1000);
+                        enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
                 sendBroadcast(i);
 
                 // remove the notification
@@ -195,7 +224,6 @@ public class MainActivity extends Activity {
 
                     // restart in order to prevent auto quitting
                     sleep(1200000);
-                    Toast.makeText(MainActivity.this,"Stop services",Toast.LENGTH_SHORT).show();
 
                     stopService(intentLoc);
                     stopService(intentMov);

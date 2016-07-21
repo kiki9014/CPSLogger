@@ -36,6 +36,7 @@ import java.io.StreamCorruptedException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class NotificationService extends NotificationListenerService {
@@ -138,35 +139,44 @@ public class NotificationService extends NotificationListenerService {
 
         notiLogger.writeData("Notification Listen Service is started");
 
-        IntentFilter iF = new IntentFilter();
-        iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.android.music.playstatechanged");
-        iF.addAction("com.android.music.playbackcomplete");
-        iF.addAction("com.android.music.queuechanged");
-        registerReceiver(mMReceiver,iF);
+//        IntentFilter iF = new IntentFilter();
+//        iF.addAction("com.android.music.metachanged");
+//        iF.addAction("com.android.music.playstatechanged");
+//        iF.addAction("com.android.music.playbackcomplete");
+//        iF.addAction("com.android.music.queuechanged");
+//        registerReceiver(mMReceiver, iF);
 
         return START_NOT_STICKY;
     }
 
-    public void quitFunc(){
-//        Log.v(name, "Service will be destroyed");
+//    public void quitFunc(){
+////        Log.v(name, "Service will be destroyed");
+//
+//        startTrigger = false;
+////        Log.v(name, "Service is destroyed");
+//        unregisterReceiver(nReceiver);
+//        unregisterReceiver(mMReceiver);
+//        unregisterReceiver(smsMan);
+//        unregisterReceiver(mmsMan);
+//
+//        if(fileOpen){
+//            notiLogger.closeFile(name);
+//            fileOpen = false;
+//        }
+//        exportHashTable(senderList, "Notification");
+//        exportHashTable(mmsList, "MMS");
+//        exportHashTable(smsList, "SMS");
+//
+//        Toast.makeText(this,"NotificationCollecting is Ended",Toast.LENGTH_SHORT).show();
+//    }
 
-        startTrigger = false;
-//        Log.v(name, "Service is destroyed");
-        unregisterReceiver(nReceiver);
-        unregisterReceiver(mMReceiver);
-        unregisterReceiver(smsMan);
-        unregisterReceiver(mmsMan);
-
-        if(fileOpen){
-            notiLogger.closeFile(name);
-            fileOpen = false;
+    public void safelyUnregisterReceiver(BroadcastReceiver receiver){
+        try{
+            unregisterReceiver(receiver);
         }
-        exportHashTable(senderList,"Notification");
-        exportHashTable(mmsList, "MMS");
-        exportHashTable(smsList, "SMS");
-
-        Toast.makeText(this,"NotificationCollecting is Ended",Toast.LENGTH_SHORT).show();
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -175,10 +185,10 @@ public class NotificationService extends NotificationListenerService {
 
         startTrigger = false;
         Log.v(name, "Service is destroyed");
-        unregisterReceiver(nReceiver);
-        unregisterReceiver(mMReceiver);
-        unregisterReceiver(smsMan);
-        unregisterReceiver(mmsMan);
+        safelyUnregisterReceiver(nReceiver);
+//        safelyUnregisterReceiver(mMReceiver);
+        safelyUnregisterReceiver(smsMan);
+        safelyUnregisterReceiver(mmsMan);
 
         if(fileOpen){
             notiLogger.closeFile(name);
@@ -495,18 +505,18 @@ public class NotificationService extends NotificationListenerService {
             return false;
     }
 
-    private BroadcastReceiver mMReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            String cmd = intent.getStringExtra("command");
-//            Log.d("mReceiver.onReceive ", action + " / " + cmd);
-            String artist = intent.getStringExtra("artist");
-            String album = intent.getStringExtra("album");
-            String track = intent.getStringExtra("track");
-//            Log.d("Music",artist+":"+album+":"+track);
-        }
-    };
+//    private BroadcastReceiver mMReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            String cmd = intent.getStringExtra("command");
+////            Log.d("mReceiver.onReceive ", action + " / " + cmd);
+//            String artist = intent.getStringExtra("artist");
+//            String album = intent.getStringExtra("album");
+//            String track = intent.getStringExtra("track");
+////            Log.d("Music",artist+":"+album+":"+track);
+//        }
+//    };
 
     public Hashtable<String, Integer> importHashTable(String name){
         Hashtable<String, Integer> hashT;
