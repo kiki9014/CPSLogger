@@ -3,6 +3,7 @@ package cpslab.inhwan.cpslogger_v02;
 /**
  * Created by Inhwan on 2015-10-01.
  */
+import java.io.IOException;
 import java.util.*;
 import android.app.*;
 import android.app.usage.UsageStats;
@@ -11,6 +12,11 @@ import android.content.*;
 import android.os.*;
 import android.util.*;
 import android.widget.*;
+
+import com.jaredrummler.android.processes.AndroidProcesses;
+import com.jaredrummler.android.processes.models.AndroidAppProcess;
+import com.jaredrummler.android.processes.models.AndroidProcess;
+import com.jaredrummler.android.processes.models.Stat;
 
 public class RunningAppService extends Service {
     static String name = "App";
@@ -85,18 +91,28 @@ public class RunningAppService extends Service {
 //                    for (ActivityManager.RunningAppProcessInfo info: procInfos) {
 //                        Log.i("pkgName", info.processName);
 //                    }
-                    String pkgName = printForegroundTask(RunningAppService.this);
-                    Log.d("pkgName", pkgName);
 
-                    if(pkgName.compareTo(pkgbuff) != 0 ) {
-//                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");
-                        pkgbuff = pkgName;
-                        Log.i("pkgbuff", pkgbuff);
-//                        Log.i("pkgNo", Double.toString(procInfos.size()));
-                        String pkgData = "top," + pkgbuff;
-                        appLogger.writeData(pkgData);
+                    List<AndroidAppProcess> processes = AndroidProcesses.getRunningForegroundApps(getApplicationContext());
+                    String pkgData = "Forground";
+                    for(AndroidAppProcess process : processes){
+                        pkgData = pkgData + "," + process.getPackageName();
                     }
-                    else {}
+
+                    Log.d("ForeApp", pkgData);
+                    appLogger.writeData(pkgData);
+
+//                    String pkgName = printForegroundTask(RunningAppService.this);
+//                    Log.d("pkgName", pkgName);
+//
+//                    if(pkgName.compareTo(pkgbuff) != 0 ) {
+////                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");
+//                        pkgbuff = pkgName;
+//                        Log.i("pkgbuff", pkgbuff);
+////                        Log.i("pkgNo", Double.toString(procInfos.size()));
+//                        String pkgData = "top," + pkgbuff;
+//                        appLogger.writeData(pkgData);
+//                    }
+//                    else {}
 
                     //	for(int i = 0; i < procInfos.size(); i++)
                     //	{
@@ -112,15 +128,17 @@ public class RunningAppService extends Service {
         public String printForegroundTask(Context context) {
             String currentApp = "Null";
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                UsageStatsManager usm = (UsageStatsManager) context
-                        .getSystemService(USAGE_STATS_SERVICE);
-                long time = System.currentTimeMillis();
-                List<UsageStats> appList = usm.queryUsageStats(
-                        UsageStatsManager.INTERVAL_BEST, time - 1000 * 1000, time);
-                if (appList != null && appList.size() > 0) {
-                    SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                    for (UsageStats usageStats : appList) {
-                        mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                List<AndroidAppProcess> processes = AndroidProcesses.getRunningForegroundApps(getApplicationContext());
+                if (processes != null && processes.size() > 0) {
+                    SortedMap<Long, AndroidAppProcess> mySortedMap = new TreeMap<Long, AndroidAppProcess>();
+                    for (AndroidAppProcess process : processes) {
+                        try{
+                            Stat stat = process.stat();
+                            mySortedMap.put(stat.priority(), process);
+                        }
+                        catch (IOException e){
+                            e.printStackTrace();
+                        }
                     }
                     if (mySortedMap != null && !mySortedMap.isEmpty()) {
                         currentApp = mySortedMap.get(mySortedMap.lastKey())
