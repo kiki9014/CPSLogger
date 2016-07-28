@@ -499,7 +499,7 @@ public class NotificationService extends NotificationListenerService {
     }
 
     boolean isMassenger(String packageName){
-        if(packageName.equals("com.kakao.talk") | packageName.equals("jp.naver.line.android") | packageName.equals("com.Slack"))
+        if(packageName.equals("com.kakao.talk") | packageName.equals("jp.naver.line.android") | packageName.equals("com.Slack") | packageName.equals("com.facebook.orca"))
             return true;
         else
             return false;

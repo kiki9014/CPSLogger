@@ -69,7 +69,7 @@ public class SignalSensingService extends Service {
             }
         };
 
-        bTh = new bluetoothTh();
+//        bTh = new bluetoothTh();
 
         fileOpen = true;
     }
@@ -86,7 +86,7 @@ public class SignalSensingService extends Service {
         }
         logRunning = true;
 
-        bTh.start();
+//        bTh.start();
 
         return START_STICKY;		//Sticky n Unsticky: what is the difference?
     }

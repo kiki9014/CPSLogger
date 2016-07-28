@@ -74,8 +74,10 @@ public class SoftSensingService extends Service {
         sel1 = Browser.BookmarkColumns.BOOKMARK + " = 0"; // 0 = history, 1 = bookmark
         sel2 = Browser.BookmarkColumns.BOOKMARK + " = 1"; // 0 = history, 1 = bookmark
 
-        histCur = getContentResolver().query(Browser.BOOKMARKS_URI, bookMark, sel1, null, null); // cursor for history
-        bookCur = getContentResolver().query(Browser.BOOKMARKS_URI, bookMark, sel2, null, null); // cursor for bookmark
+        Uri uriCustom = Uri.parse("content://com.android.chrome.browser/bookmarks");
+
+        histCur = getContentResolver().query(uriCustom, bookMark, sel1, null, null); // cursor for history
+        bookCur = getContentResolver().query(uriCustom, bookMark, sel2, null, null); // cursor for bookmark
         keyCur = getContentResolver().query(Browser.SEARCHES_URI, searchKey, null, null, null);
 //	    startManagingCursor(mCur);
 
@@ -221,6 +223,7 @@ public class SoftSensingService extends Service {
     private class histTh extends Thread {
 
         public void run() {
+            Log.d("history", "Load start");
 
             histCur.moveToFirst();
             String title = "";
@@ -235,8 +238,8 @@ public class SoftSensingService extends Service {
                     url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
 //							url = histCur.getString(histCur.getColumnIndex("URL"));
                     // Do something with title and url
-//                            Log.i("histtitle", title);
-//                            Log.i("histurl", url);
+                            Log.i("histtitle", title);
+                            Log.i("histurl", url);
                     if(fileOpen){
                         histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                         histLogger.writeData("histURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
@@ -296,8 +299,8 @@ public class SoftSensingService extends Service {
                     // Do something with title and url
 
                     String book = Base64.encodeToString(title.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP);
-//                            Log.i("booktitle", title);
-//                            Log.i("bookurl", url);
+                            Log.i("booktitle", title);
+                            Log.i("bookurl", url);
                     if(fileOpen){
                         bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
                         bookLogger.writeData("bookURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));

@@ -5,6 +5,8 @@ package cpslab.inhwan.cpslogger_v02;
  */
 import java.util.*;
 import android.app.*;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.*;
 import android.os.*;
 import android.util.*;
@@ -68,22 +70,28 @@ public class RunningAppService extends Service {
 
             while(!mQuit) {
                 try {
-                    ActivityManager activityManager = (ActivityManager)getSystemService( ACTIVITY_SERVICE );
-                    List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-
-//                    List<ActivityManager.RunningTaskInfo> taskInfos = activityManager.getRunningTasks(1);
-
-//                    ComponentName topActivity = taskInfos.get(0).topActivity;
-//                    String pkgName = topActivity.getPackageName();
-
-//                    Log.d("RunningProcess", procInfos.get(0).processName);
-                    String pkgName = procInfos.get(0).processName;
-//                    Log.i("pkgName", pkgName);
+//                    ActivityManager activityManager = (ActivityManager)getSystemService( ACTIVITY_SERVICE );
+//                    List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+//
+////                    List<ActivityManager.RunningTaskInfo> taskInfos = activityManager.getRunningTasks(1);
+//
+////                    ComponentName topActivity = taskInfos.get(0).topActivity;
+////                    String pkgName = topActivity.getPackageName();
+//
+////                    Log.d("RunningProcess", procInfos.get(0).processName);
+//                    String pkgName = "test";//procInfos.get(0).processName;
+////                    Log.i("pkgName", pkgName);
+//                    Log.i("pkgNum", "size is " + procInfos.size());
+//                    for (ActivityManager.RunningAppProcessInfo info: procInfos) {
+//                        Log.i("pkgName", info.processName);
+//                    }
+                    String pkgName = printForegroundTask(RunningAppService.this);
+                    Log.d("pkgName", pkgName);
 
                     if(pkgName.compareTo(pkgbuff) != 0 ) {
 //                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");
                         pkgbuff = pkgName;
-//                        Log.i("pkgbuff", pkgbuff);
+                        Log.i("pkgbuff", pkgbuff);
 //                        Log.i("pkgNo", Double.toString(procInfos.size()));
                         String pkgData = "top," + pkgbuff;
                         appLogger.writeData(pkgData);
@@ -99,6 +107,34 @@ public class RunningAppService extends Service {
                     e.printStackTrace();
                 }
             }
+        }
+
+        public String printForegroundTask(Context context) {
+            String currentApp = "Null";
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                UsageStatsManager usm = (UsageStatsManager) context
+                        .getSystemService(USAGE_STATS_SERVICE);
+                long time = System.currentTimeMillis();
+                List<UsageStats> appList = usm.queryUsageStats(
+                        UsageStatsManager.INTERVAL_BEST, time - 1000 * 1000, time);
+                if (appList != null && appList.size() > 0) {
+                    SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                    for (UsageStats usageStats : appList) {
+                        mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                    }
+                    if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                        currentApp = mySortedMap.get(mySortedMap.lastKey())
+                                .getPackageName();
+                    }
+                }
+            } else {
+                ActivityManager am = (ActivityManager) context
+                        .getSystemService(Context.ACTIVITY_SERVICE);
+                currentApp = am.getRunningTasks(1).get(0).topActivity
+                        .getPackageName();
+
+            }
+            return currentApp;
         }
     }
 
