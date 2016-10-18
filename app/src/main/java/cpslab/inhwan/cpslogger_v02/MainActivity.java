@@ -11,6 +11,12 @@ import android.widget.*;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class MainActivity extends Activity {
 
     NotificationManager nm;
@@ -35,8 +41,6 @@ public class MainActivity extends Activity {
     Intent intentSig;
     Intent intentPhone;
 
-    Boolean isActive = false;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -52,7 +56,6 @@ public class MainActivity extends Activity {
         mWakeLock = null;
         mButton = false;
         onOff = false;
-        isActive = false;
 //    	serviceOn = false;
 
         intentLoc = new Intent(MainActivity.this, LocationService.class);
@@ -66,6 +69,15 @@ public class MainActivity extends Activity {
         intentSig = new Intent(MainActivity.this,SignalSensingService.class);
         intentPhone = new Intent(MainActivity.this,PhoneStateService.class);
 
+        try {
+            Calendar calendar = Calendar.getInstance();
+            File logfile= new File(Environment.getExternalStorageDirectory()+"/CPSLogger/logfile_" + new SimpleDateFormat("yyyy_MM_dd").format(new Date()) + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s.txt");
+            logfile.createNewFile();
+            String cmd = "logcat -d -f "+logfile.getAbsolutePath();
+            Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //startService(intentGear);
 
         ContentResolver contentResolver = this.getContentResolver();
@@ -77,6 +89,7 @@ public class MainActivity extends Activity {
             Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             startActivity(settingNoti);
         }
+        String enabledUsage = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
 
         kgthread = new KeepGoing();
 
@@ -84,23 +97,19 @@ public class MainActivity extends Activity {
         Button btnstart = (Button)findViewById(R.id.start);
         btnstart.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
+//                Intent settingUsage = new Intent("android.settigs.ACTION_USAGE_ACCESS_SETTINGS");
+//                startActivity(settingUsage);
 
-                if(isActive==false) {
-                    mButton = true;
-//                    isActive = true;
+                mButton = true;
 
-                    if (onOff == true) {
-                        kgthread = new KeepGoing();
-                    }
-
-                    // start the thread
-                    kgthread.start();
-                    //Intent textInputAct = new Intent(MainActivity.this,textInput.class);
-                    //startActivity(textInputAct);
+                if (onOff == true) {
+                    kgthread = new KeepGoing();
                 }
-                else{
-                    Toast.makeText(MainActivity.this, "Already active", Toast.LENGTH_SHORT).show();
-                }
+
+                // start the thread
+                kgthread.start();
+                //Intent textInputAct = new Intent(MainActivity.this,textInput.class);
+                //startActivity(textInputAct);
             }
         });
 
@@ -109,39 +118,48 @@ public class MainActivity extends Activity {
         btnend.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
-                if(isActive) {
+                mButton = false;
+                onOff = true; // indicates that the end button is pressed
 
-                    mButton = false;
-                    onOff = true; // indicates that the end button is pressed
-                    isActive = false;
-
-                    // stop services
-                    stopService(intentLoc);
-                    stopService(intentMov);
-                    stopService(intentWifi);
-                    stopService(intentRec);
-                    stopService(intentSoft);
+                // stop services
+                stopService(intentLoc);
+                stopService(intentMov);
+                stopService(intentWifi);
+				stopService(intentRec);
+                stopService(intentSoft);
 //                stopService(intentGear);
-                    stopService(intentApp);
-                    stopService(intentSig);
-                    stopService(intentNoti);
-                    stopService(intentPhone);
-                    Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
-                    i.putExtra("Notification_Event", "QUIT");
-                    sendBroadcast(i);
+                stopService(intentApp);
+                stopService(intentSig);
+                stopService(intentNoti);
+                stopService(intentPhone);
+                Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
+                i.putExtra("Notification_Event", "QUIT");
+                Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivity(settingNoti);
 
-                    // remove the notification
-                    nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    nm.cancel(1234);
-                    // not necessary maybe...
-                    if (mWakeLock != null) {
-                        mWakeLock.release();
-                        mWakeLock = null;
-                        Log.i("mWakeLock", "off");
+                ContentResolver contentResolver = MainActivity.this.getContentResolver();
+                String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
+                while(enabledNoti != null && enabledNoti.contains(MainActivity.this.getPackageName())){
+//                    Log.d("main","Already Set");
+                    Log.d("main", "Not disabled : " + enabledNoti.contains(MainActivity.this.getPackageName()));
+                    try {
+                        SystemClock.sleep(1000);
+                        enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
-                else{
-                    Toast.makeText(MainActivity.this, "Already inactive", Toast.LENGTH_SHORT).show();
+                sendBroadcast(i);
+
+                // remove the notification
+                nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                nm.cancel(1234);
+                // not necessary maybe...
+                if(mWakeLock != null) {
+                    mWakeLock.release();
+                    mWakeLock = null;
+                    Log.i("mWakeLock", "off");
                 }
             }
         });
@@ -173,80 +191,67 @@ public class MainActivity extends Activity {
 
             while(mButton) {
                 try {
-                    if(!isActive) {
 
-                        isActive = true;
+                    Log.d("mButton", "okok");
 
-                        Log.d("mButton", "okok");
-
-                        // start services
-                        startService(intentLoc);
-                        startService(intentMov);
-                        startService(intentWifi);
-                        startService(intentRec);
-                        startService(intentSoft);
-                        startService(intentApp);
-                        startService(intentNoti);
+                    // start services
+                    startService(intentLoc);
+                    startService(intentMov);
+                    startService(intentWifi);
+					startService(intentRec);
+                    startService(intentSoft);
+                    startService(intentApp);
+                    startService(intentNoti);
 //                    startService(intentGear);
-                        startService(intentSig);
-                        startService(intentPhone);
+                    startService(intentSig);
+                    startService(intentPhone);
 
-                        serviceOn = true;
+                    serviceOn = true;
 
-                        // notification at status bar
-                        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        PendingIntent intent1 = PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this, MainActivity.class), 0);
+                    // notification at status bar
+                    nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                    PendingIntent intent1 = PendingIntent.getActivity(MainActivity.this, 0, new Intent(MainActivity.this, MainActivity.class), 0);
 
-                        // Create Notification Object
-                        Notification notification = new Notification(android.R.drawable.ic_input_add, "Big Brother is Watching U", System.currentTimeMillis());
-                        notification.setLatestEventInfo(MainActivity.this, "HistoryLogNew", "Big Brother is Watching U", intent1);
-                        nm.notify(1234, notification);
+                    // Create Notification Object
+                    Notification notification = new Notification(android.R.drawable.ic_input_add, "Big Brother is Watching U", System.currentTimeMillis());
+                    notification.setLatestEventInfo(MainActivity.this, "HistoryLogNew", "Big Brother is Watching U", intent1);
+                    nm.notify(1234, notification);
 
-                        // not necessary...maybe
-                        if (mWakeLock == null) {
-                            mPm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                            mWakeLock = mPm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wake_Lock");
-                            Log.i("mWakeLock", "on");
-                            mWakeLock.acquire();
-                        }
+                    // not necessary...maybe
+                    if(mWakeLock == null) {
+                        mPm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+                        mWakeLock = mPm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wake_Lock");
+                        Log.i("mWakeLock", "on");
+                        mWakeLock.acquire();
                     }
 
                     // restart in order to prevent auto quitting
                     sleep(1200000);
 
-                    if(isActive) {
-                        Toast.makeText(MainActivity.this, "Time is up, refresh services", Toast.LENGTH_SHORT).show();
-
-                        isActive = false;
-
-                        stopService(intentLoc);
-                        stopService(intentMov);
-                        stopService(intentWifi);
-                        stopService(intentRec);
-                        stopService(intentSoft);
-                        stopService(intentNoti);
-                        stopService(intentApp);
+                    stopService(intentLoc);
+                    stopService(intentMov);
+                    stopService(intentWifi);
+					stopService(intentRec);
+                    stopService(intentSoft);
+                    stopService(intentNoti);
+                    stopService(intentApp);
 //                    stopService(intentGear);
-                        stopService(intentSig);
-                        stopService(intentPhone);
-                        Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
-                        i.putExtra("Notification_Event", "QUIT");
-                        sendBroadcast(i);
+                    stopService(intentSig);
+                    stopService(intentPhone);
 
-                        serviceOn = false;
+                    serviceOn = false;
 
-                        // this needs to be modified
-                        // Stopping the service is not working properly that it continuously turned on after the sleep()
+                    // this needs to be modified
+                    // Stopping the service is not working properly that it continuously turned on after the sleep()
 
-                        // remove the notification
-                        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        nm.cancel(1234);
+                    // remove the notification
+                    nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                    nm.cancel(1234);
 
-                        if (mWakeLock != null) {
-                            mWakeLock.release();
-                            mWakeLock = null;
-                            Log.i("mWakeLock", "off");
-                        }
+                    if(mWakeLock != null) {
+                        mWakeLock.release();
+                        mWakeLock = null;
+                        Log.i("mWakeLock", "off");
                     }
 
                 } catch (InterruptedException e) {

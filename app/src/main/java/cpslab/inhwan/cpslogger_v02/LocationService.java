@@ -66,7 +66,7 @@ public class LocationService extends Service {
 //            lg_Loc.o("LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
 //			}
 
-            Log.d("GPS: ", "LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
+//            Log.d("GPS: ", "LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
 
             if(fileOpen)
                 locLogger.writeData("GPS," + location.getLatitude() + "," + location.getLongitude() + "," + location.getAltitude());
@@ -89,7 +89,7 @@ public class LocationService extends Service {
                 String str_temp[] = nmea.split(",");
 //                mTxtGPSno.setText("GPS No: " + str_temp[7] + "\n");
 //                lg_GPS.o("No. of Satellite: " + str_temp[7]);
-                Log.d("No. of Satellite", str_temp[7]);
+//                Log.d("No. of Satellite", str_temp[7]);
                 if(fileOpen)
                     locLogger.writeData("SAT,"+ str_temp[7]);
             }

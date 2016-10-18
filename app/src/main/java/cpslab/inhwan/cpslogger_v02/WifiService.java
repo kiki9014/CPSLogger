@@ -92,7 +92,7 @@ public class WifiService extends Service {
                         if(i < configs.size() - 1)
                             sb.append(",");
                     }
-                    Log.d("Wifi Connection Info: ", sbOrigin + "\n");
+//                    Log.d("Wifi Connection Info: ", sbOrigin + "\n");
                     wifiLogger.writeData(sb.toString());
                     sleep(30000);
                 } catch (InterruptedException e) {

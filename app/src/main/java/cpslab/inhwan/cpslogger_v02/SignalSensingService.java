@@ -59,17 +59,17 @@ public class SignalSensingService extends Service {
 
                     String bluetoothData = "bluetooth " + devAddr + " " + devName + " " + rssi;
 
-                    Log.d(name+"|bluetooth",bluetoothData);
+//                    Log.d(name+"|bluetooth",bluetoothData);
 
                     sigLogger.writeData(bluetoothData);
                 }
                 else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                    Log.d(name + "|bluetooth", "Discovery end");
+//                    Log.d(name + "|bluetooth", "Discovery end");
                 }
             }
         };
 
-        bTh = new bluetoothTh();
+//        bTh = new bluetoothTh();
 
         fileOpen = true;
     }
@@ -78,7 +78,7 @@ public class SignalSensingService extends Service {
     public int onStartCommand (Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Toast.makeText(this, "Signal Sensing is started", Toast.LENGTH_SHORT).show();		//toast message
-        Log.d(name, "SignalSensingStart");
+//        Log.d(name, "SignalSensingStart");
 
         if(!fileOpen){
             sigLogger.createFile(name);
@@ -86,7 +86,7 @@ public class SignalSensingService extends Service {
         }
         logRunning = true;
 
-        bTh.start();
+//        bTh.start();
 
         return START_STICKY;		//Sticky n Unsticky: what is the difference?
     }
@@ -100,7 +100,7 @@ public class SignalSensingService extends Service {
             sigLogger.closeFile(name);
             fileOpen = false;
         }
-        Log.d(name,"Service Ended");
+//        Log.d(name,"Service Ended");
         logRunning = false;
     }
 
@@ -120,7 +120,7 @@ public class SignalSensingService extends Service {
 
             String signal = signalStrength.toString();
 
-            Log.d(name,signal);
+//            Log.d(name,signal);
             sigLogger.writeData(signal);
 
         }
@@ -129,7 +129,8 @@ public class SignalSensingService extends Service {
         public void onCellInfoChanged(List<CellInfo> cellInfos){
             if(cellInfos != null && cellInfos.size() != 0){
                 for(CellInfo cellInfo : cellInfos){
-                    Log.d(name+"|Info", cellInfo.toString());
+//                    Log.d(name+"|Info", cellInfo.toString());
+//                    sigLogger.writeData(cellInfo.toString());
                 }
             }
         }
@@ -137,14 +138,16 @@ public class SignalSensingService extends Service {
         @Override
         public void onCellLocationChanged(CellLocation cellLocation){
             int cid,lac,psc;
-            GsmCellLocation cellLoc = (GsmCellLocation)cellLocation;
-            cid  = cellLoc.getCid();
-            lac = cellLoc.getLac();
-            psc = cellLoc.getPsc();
+            if(cellLocation instanceof GsmCellLocation) {
+                GsmCellLocation cellLoc = (GsmCellLocation) cellLocation;
+                cid = cellLoc.getCid();
+                lac = cellLoc.getLac();
+                psc = cellLoc.getPsc();
 
-            String cellLocData = "cellLoc " + cid + " " + lac + " " + psc;
-            Log.d(name+"|Loc", cellLocData);
-            sigLogger.writeData(cellLocData);
+                String cellLocData = "cellLoc " + cid + " " + lac + " " + psc;
+//            Log.d(name+"|Loc", cellLocData);
+                sigLogger.writeData(cellLocData);
+            }
         }
 
     }
@@ -173,7 +176,7 @@ public class SignalSensingService extends Service {
                         sleep(600000);
                     }
                     else{
-                        Log.d("BLUETOOTH","Bluetooth is not enabled");
+//                        Log.d("BLUETOOTH","Bluetooth is not enabled");
                         sleep(600000);
                     }
                 }
