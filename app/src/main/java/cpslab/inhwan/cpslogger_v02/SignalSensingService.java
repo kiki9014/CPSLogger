@@ -138,14 +138,16 @@ public class SignalSensingService extends Service {
         @Override
         public void onCellLocationChanged(CellLocation cellLocation){
             int cid,lac,psc;
-            GsmCellLocation cellLoc = (GsmCellLocation)cellLocation;
-            cid  = cellLoc.getCid();
-            lac = cellLoc.getLac();
-            psc = cellLoc.getPsc();
+            if(cellLocation instanceof GsmCellLocation) {
+                GsmCellLocation cellLoc = (GsmCellLocation) cellLocation;
+                cid = cellLoc.getCid();
+                lac = cellLoc.getLac();
+                psc = cellLoc.getPsc();
 
-            String cellLocData = "cellLoc " + cid + " " + lac + " " + psc;
+                String cellLocData = "cellLoc " + cid + " " + lac + " " + psc;
 //            Log.d(name+"|Loc", cellLocData);
-            sigLogger.writeData(cellLocData);
+                sigLogger.writeData(cellLocData);
+            }
         }
 
     }

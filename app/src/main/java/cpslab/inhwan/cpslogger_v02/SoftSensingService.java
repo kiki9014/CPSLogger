@@ -158,20 +158,28 @@ public class SoftSensingService extends Service {
         public void run() {
 
 //            ContentResolver cr = getContentResolver();
-
-            clipData = clipboardManager.getPrimaryClip();
-            if (clipData != null) {
+            while(!mQuit){
+                try{
+                    clipData = clipboardManager.getPrimaryClip();
+                    if (clipData != null) {
 
 //                        clipboardManager.get
 
 //                        clipTxt = clipboardManager.getText().toString();
-                ClipData.Item item = clipData.getItemAt(0);
+                        ClipData.Item item = clipData.getItemAt(0);
 
-                clipTxt = item.toString();
+                        clipTxt = item.toString();
 
-//                Log.i("clipboard", clipTxt);
-                if(fileOpen)
-                    clipLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
+                        Log.i("clipboard", clipTxt);
+                        if(fileOpen)
+                            clipLogger.writeData("clip,"+Base64.encodeToString(clipTxt.getBytes(),Base64.NO_WRAP));
+                    }
+                    sleep(60000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
             }
 
 //            while(!mQuit) {
@@ -225,27 +233,35 @@ public class SoftSensingService extends Service {
         public void run() {
             Log.d("history", "Load start");
 
-            histCur.moveToFirst();
-            String title = "";
-            String url = "";
+            while(!mQuit){
+                try{
+                    histCur.moveToFirst();
+                    String title = "";
+                    String url = "";
 
 //            Log.d("histCur", "hist: "+histCur.getCount());
 
-            if (histCur.moveToFirst() && histCur.getCount() > 0) {
-                while (histCur.isAfterLast() == false) {
+                    if (histCur.moveToFirst() && histCur.getCount() > 0) {
+                        while (histCur.isAfterLast() == false) {
 
-                    title = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
-                    url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
+                            title = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
+                            url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
 //							url = histCur.getString(histCur.getColumnIndex("URL"));
-                    // Do something with title and url
+                            // Do something with title and url
                             Log.i("histtitle", title);
                             Log.i("histurl", url);
-                    if(fileOpen){
-                        histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        histLogger.writeData("histURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
-                    }
+                            if(fileOpen){
+                                histLogger.writeData("histTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                                histLogger.writeData("histURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
+                            }
 
-                    histCur.moveToNext();
+                            histCur.moveToNext();
+                        }
+                    }
+                    sleep(60000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
                 }
             }
 
@@ -286,27 +302,37 @@ public class SoftSensingService extends Service {
 
         public void run() {
 
-            bookCur.moveToFirst();
+            while(!mQuit){
 
-            String title = "";
-            String url = "";
+                try{
 
-            if (bookCur.moveToFirst() && bookCur.getCount() > 0) {
-                while (bookCur.isAfterLast() == false) {
+                    bookCur.moveToFirst();
 
-                    title = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
-                    url = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.URL));
-                    // Do something with title and url
+                    String title = "";
+                    String url = "";
 
-                    String book = Base64.encodeToString(title.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP);
+                    if (bookCur.moveToFirst() && bookCur.getCount() > 0) {
+                        while (bookCur.isAfterLast() == false) {
+
+                            title = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
+                            url = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.URL));
+                            // Do something with title and url
+
+                            String book = Base64.encodeToString(title.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP);
                             Log.i("booktitle", title);
                             Log.i("bookurl", url);
-                    if(fileOpen){
-                        bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
-                        bookLogger.writeData("bookURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
-                    }
+                            if(fileOpen){
+                                bookLogger.writeData("bookTitle,"+Base64.encodeToString(title.getBytes(),Base64.NO_WRAP));
+                                bookLogger.writeData("bookURL,"+Base64.encodeToString(url.getBytes(),Base64.NO_WRAP));
+                            }
 
-                    bookCur.moveToNext();
+                            bookCur.moveToNext();
+                        }
+                    }
+                    sleep(60000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
                 }
             }
             bookCur.close();
@@ -344,40 +370,49 @@ public class SoftSensingService extends Service {
 
         public void run() {
 
-            keyCur.moveToFirst();
+            while(!mQuit){
 
-            String date = "";
-            String search = "";
+                try{
+                    keyCur.moveToFirst();
+
+                    String date = "";
+                    String search = "";
 
 //                    Log.i("search count", "count: " + keyCur.getCount());
 
 //            date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
 //            search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
-            // Do something with date and search(keyword)
+                    // Do something with date and search(keyword)
 //                    Log.i("date", date);
 //                    Log.i("search", search);
 
-            if (keyCur.moveToFirst() && keyCur.getCount() > 0) {
-                while (keyCur.isAfterLast() == false) {
+                    if (keyCur.moveToFirst() && keyCur.getCount() > 0) {
+                        while (keyCur.isAfterLast() == false) {
 
-                    String key;
-                    date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
-                    search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
-                    // Do something with date and search(keyword)
+                            String key;
+                            date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
+                            search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
+                            // Do something with date and search(keyword)
 
-                    key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
+                            key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
 //                            Log.i("date", date);
 //                            Log.i("search", search);
-                    if(fileOpen){
-                        keyLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
-                        keyLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
-                    }
+                            if(fileOpen){
+                                keyLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
+                                keyLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
+                            }
 
-                    keyCur.moveToNext();
+                            keyCur.moveToNext();
+                        }
+                    }
+                    sleep(60000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
                 }
             }
-            keyCur.close();
 
+            keyCur.close();
 //            while(!mQuit) {
 //                try {
 //

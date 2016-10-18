@@ -122,16 +122,16 @@ public class MainActivity extends Activity {
                 onOff = true; // indicates that the end button is pressed
 
                 // stop services
-//                stopService(intentLoc);
-//                stopService(intentMov);
-//                stopService(intentWifi);
-//				stopService(intentRec);
+                stopService(intentLoc);
+                stopService(intentMov);
+                stopService(intentWifi);
+				stopService(intentRec);
                 stopService(intentSoft);
 //                stopService(intentGear);
                 stopService(intentApp);
-//                stopService(intentSig);
-//                stopService(intentNoti);
-//                stopService(intentPhone);
+                stopService(intentSig);
+                stopService(intentNoti);
+                stopService(intentPhone);
                 Intent i = new Intent("cpslab.inhwan.cpslogger_v02.NotificationService");
                 i.putExtra("Notification_Event", "QUIT");
                 Intent settingNoti = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
@@ -195,16 +195,16 @@ public class MainActivity extends Activity {
                     Log.d("mButton", "okok");
 
                     // start services
-//                    startService(intentLoc);
-//                    startService(intentMov);
-//                    startService(intentWifi);
-//					startService(intentRec);
+                    startService(intentLoc);
+                    startService(intentMov);
+                    startService(intentWifi);
+					startService(intentRec);
                     startService(intentSoft);
                     startService(intentApp);
-//                    startService(intentNoti);
+                    startService(intentNoti);
 //                    startService(intentGear);
-//                    startService(intentSig);
-//                    startService(intentPhone);
+                    startService(intentSig);
+                    startService(intentPhone);
 
                     serviceOn = true;
 
@@ -228,16 +228,16 @@ public class MainActivity extends Activity {
                     // restart in order to prevent auto quitting
                     sleep(1200000);
 
-//                    stopService(intentLoc);
-//                    stopService(intentMov);
-//                    stopService(intentWifi);
-//					stopService(intentRec);
+                    stopService(intentLoc);
+                    stopService(intentMov);
+                    stopService(intentWifi);
+					stopService(intentRec);
                     stopService(intentSoft);
-//                    stopService(intentNoti);
+                    stopService(intentNoti);
                     stopService(intentApp);
 //                    stopService(intentGear);
-//                    stopService(intentSig);
-//                    stopService(intentPhone);
+                    stopService(intentSig);
+                    stopService(intentPhone);
 
                     serviceOn = false;
 

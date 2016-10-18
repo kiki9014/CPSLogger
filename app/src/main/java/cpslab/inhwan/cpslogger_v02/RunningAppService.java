@@ -76,21 +76,6 @@ public class RunningAppService extends Service {
 
             while(!mQuit) {
                 try {
-//                    ActivityManager activityManager = (ActivityManager)getSystemService( ACTIVITY_SERVICE );
-//                    List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-//
-////                    List<ActivityManager.RunningTaskInfo> taskInfos = activityManager.getRunningTasks(1);
-//
-////                    ComponentName topActivity = taskInfos.get(0).topActivity;
-////                    String pkgName = topActivity.getPackageName();
-//
-////                    Log.d("RunningProcess", procInfos.get(0).processName);
-//                    String pkgName = "test";//procInfos.get(0).processName;
-////                    Log.i("pkgName", pkgName);
-//                    Log.i("pkgNum", "size is " + procInfos.size());
-//                    for (ActivityManager.RunningAppProcessInfo info: procInfos) {
-//                        Log.i("pkgName", info.processName);
-//                    }
 
                     List<AndroidAppProcess> processes = AndroidProcesses.getRunningForegroundApps(getApplicationContext());
                     String pkgData = "Forground";
@@ -100,24 +85,6 @@ public class RunningAppService extends Service {
 
                     Log.d("ForeApp", pkgData);
                     appLogger.writeData(pkgData);
-
-//                    String pkgName = printForegroundTask(RunningAppService.this);
-//                    Log.d("pkgName", pkgName);
-//
-//                    if(pkgName.compareTo(pkgbuff) != 0 ) {
-////                        lg_App.o("\n"+"No. of Running Program: "+procInfos.size()+"\n"+"Top Activity: "+pkgName+"\n");
-//                        pkgbuff = pkgName;
-//                        Log.i("pkgbuff", pkgbuff);
-////                        Log.i("pkgNo", Double.toString(procInfos.size()));
-//                        String pkgData = "top," + pkgbuff;
-//                        appLogger.writeData(pkgData);
-//                    }
-//                    else {}
-
-                    //	for(int i = 0; i < procInfos.size(); i++)
-                    //	{
-                    //		tv.setText(tv.getText().toString()+procInfos.get(i).pid+", "+procInfos.get(i).processName+"\n");
-                    //	}
                     sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
