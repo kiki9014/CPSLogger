@@ -124,26 +124,28 @@
                 <action android:name="android.accessory.device.action.REGISTER_AGENT" />
             </intent-filter>
         </receiver>
-        <!--<receiver android:name=".NotificationService$IncomingSms">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.provider.Telephony.SMS_RECEIVED" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-        <!--<receiver-->
-            <!--android:name=".NotificationService$IncomingMMS">-->
-            <!--&lt;!&ndash;android:permission="android.permission.BROADCAST_WAP_PUSH">&ndash;&gt;-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.DATA_SMS_RECEIVED" />-->
+        <!-- <receiver android:name=".NotificationService$IncomingSms"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.provider.Telephony.SMS_RECEIVED" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+        <!-- <receiver -->
+        <!-- android:name=".NotificationService$IncomingMMS"> -->
+        <!-- &lt;!&ndash;android:permission="android.permission.BROADCAST_WAP_PUSH">&ndash;&gt; -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.DATA_SMS_RECEIVED" /> -->
 
-                <!--<data android:scheme="sms" />-->
-                <!--<data android:host="localhost" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />-->
 
-                <!--<data android:mimeType="application/vnd.wap.mms-message" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+        <!-- <data android:scheme="sms" /> -->
+        <!-- <data android:host="localhost" /> -->
+        <!-- </intent-filter> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" /> -->
+
+
+        <!-- <data android:mimeType="application/vnd.wap.mms-message" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
 
         <meta-data
             android:name="AccessoryServicesLocation"
@@ -157,11 +159,22 @@
         <service
             android:name=".SignalSensingService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".PhoneStateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+        <service
+            android:name=".PowerService"
+            android:enabled="true"
+            android:exported="true">
+            <!--<receiver android:name=".PowerConnectionReceiver">-->
+                <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>-->
+                <!--<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>-->
+                <!--</intent-filter>-->
+            <!--</receiver>-->
+        </service>
     </application>
 
 </manifest>
