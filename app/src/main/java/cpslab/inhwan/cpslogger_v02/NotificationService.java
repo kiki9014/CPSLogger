@@ -65,11 +65,13 @@ public class NotificationService extends NotificationListenerService {
         context = getApplicationContext();
         Log.v(name, "Create");
 
+        //Broadcast receiver from main activity to destroy notification service
         nReceiver = new broadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("cpslab.inhwan.cpslogger_v02.NotificationService");
         registerReceiver(nReceiver, intentFilter);
-//
+
+        //SMS and SNS listener
         smsMan = new IncomingSms();
         mmsMan = new IncomingMMS();
         IntentFilter intentFilterSMS = new IntentFilter();
@@ -88,6 +90,7 @@ public class NotificationService extends NotificationListenerService {
         registerReceiver(smsMan, intentFilterSMS);
         registerReceiver(mmsMan, intentFilterMMS);
 
+        //Hash table of sender list
         senderList = importHashTable("Notification");
         mmsList = importHashTable("MMS");
         smsList = importHashTable("SMS");
@@ -96,6 +99,7 @@ public class NotificationService extends NotificationListenerService {
         fileOpen = true;
     }
 
+    //Get data of received notification when new notification is arrived (Posted)
     @Override
     public void onNotificationPosted(StatusBarNotification sbn){
         if(startTrigger) {
@@ -106,6 +110,7 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+    //Get data of removed notification when the notification is removed from noti bar (removed)
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn){
         if(startTrigger) {
@@ -116,6 +121,7 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+    //Start NotificationService
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         super.onStartCommand(intent, flags, startId);
@@ -128,6 +134,7 @@ public class NotificationService extends NotificationListenerService {
         }
         notiLogger.writeData("Previous Notification");
 
+        //Read exist notification
         StatusBarNotification[] acticeNoti = NotificationService.this.getActiveNotifications();
         if(acticeNoti != null) {
             for (StatusBarNotification sbn : acticeNoti) {
@@ -170,6 +177,7 @@ public class NotificationService extends NotificationListenerService {
 //        Toast.makeText(this,"NotificationCollecting is Ended",Toast.LENGTH_SHORT).show();
 //    }
 
+        //Trace stack of unregistration receiver
     public void safelyUnregisterReceiver(BroadcastReceiver receiver){
         try{
             unregisterReceiver(receiver);
@@ -179,12 +187,14 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+    //Stop service
     @Override
     public void onDestroy(){
         Log.v(name, "Service will be destroyed");
 
         startTrigger = false;
         Log.v(name, "Service is destroyed");
+        //Safely unregister receiver
         safelyUnregisterReceiver(nReceiver);
 //        safelyUnregisterReceiver(mMReceiver);
         safelyUnregisterReceiver(smsMan);
@@ -194,6 +204,7 @@ public class NotificationService extends NotificationListenerService {
             notiLogger.closeFile(name);
             fileOpen = false;
         }
+        //Save Hash table
         exportHashTable(senderList,"Notification");
         exportHashTable(mmsList, "MMS");
         exportHashTable(smsList, "SMS");
@@ -201,6 +212,7 @@ public class NotificationService extends NotificationListenerService {
         super.onDestroy();
     }
 
+    //Get data of single notification
     public void getNotiData(StatusBarNotification sbn, boolean isPosted){
         String pack = Base64.encodeToString(sbn.getPackageName().getBytes(), Base64.NO_WRAP);
         String text, sbText, ticker, title, bText;
@@ -221,6 +233,7 @@ public class NotificationService extends NotificationListenerService {
         else
             textStr = cText.toString();
 
+        //If noti is from messenger, title and content is changed
         if(isMassenger(sbn.getPackageName())){
             if(!senderList.containsKey(cTitle.toString())){
                 senderList.put(cTitle.toString(),senderList.size());
@@ -272,6 +285,7 @@ public class NotificationService extends NotificationListenerService {
             notiLogger.writeData(textToSave);
     }
 
+    //Quit function using broadcast
     public class broadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent){
@@ -294,6 +308,7 @@ public class NotificationService extends NotificationListenerService {
         return mBinder;
     }
 
+    //SMS manager
     public class IncomingSms extends BroadcastReceiver{
         final SmsManager sms  = SmsManager.getDefault();
 
@@ -325,7 +340,7 @@ public class NotificationService extends NotificationListenerService {
 
 //                        Log.i("SMSReceive", "From : " + sendNumber + ", Message : " + message);
 
-                        String text2Save = "SMS," + Base64.encodeToString(sendNumber.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(message.getBytes(),Base64.NO_WRAP);
+                        String text2Save = "SMS," + Base64.encodeToString(sendNumber.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(Integer.toString(message.length()).getBytes(),Base64.NO_WRAP);//Base64.encodeToString(message.getBytes(),Base64.NO_WRAP);
                         if(fileOpen){
                             notiLogger.writeData(text2Save);
                         }
@@ -338,6 +353,7 @@ public class NotificationService extends NotificationListenerService {
         }
     }
 
+    //MMS manager. It is not my code: from other's blog
     public class IncomingMMS extends BroadcastReceiver{
         private Context _context;
 
@@ -386,7 +402,7 @@ public class NotificationService extends NotificationListenerService {
             String msg = parseMessage(id);
             Log.i("MMSReceiver", "|" + number + "|" + msg);
             msg = Integer.toString(msg.length());
-            String text2Save = "MMS,"+Base64.encodeToString(number.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(msg.getBytes(),Base64.NO_WRAP);
+            String text2Save = "MMS,"+Base64.encodeToString(number.getBytes(),Base64.NO_WRAP)+","+Base64.encodeToString(Integer.toString(msg.length()).getBytes(), Base64.NO_WRAP);//Base64.encodeToString(msg.getBytes(),Base64.NO_WRAP);
 
             if(fileOpen){
                 notiLogger.writeData(text2Save);

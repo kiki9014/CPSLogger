@@ -138,6 +138,7 @@ public class SignalSensingService extends Service {
         @Override
         public void onCellLocationChanged(CellLocation cellLocation){
             int cid,lac,psc;
+            //It need to be considered about 3G service
             if(cellLocation instanceof GsmCellLocation) {
                 GsmCellLocation cellLoc = (GsmCellLocation) cellLocation;
                 cid = cellLoc.getCid();
@@ -171,8 +172,10 @@ public class SignalSensingService extends Service {
                         getApplicationContext().registerReceiver(broadReceiver,new IntentFilter(BluetoothDevice.ACTION_FOUND));
                         getApplicationContext().registerReceiver(broadReceiver,new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
 
+                        //Start search
                         bluetooth.startDiscovery();
 
+                        //refresh evry 10 minutes
                         sleep(600000);
                     }
                     else{

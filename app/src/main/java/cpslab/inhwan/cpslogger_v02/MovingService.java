@@ -22,6 +22,7 @@ public class MovingService extends Service {
     Sensor gyrSensor;
     SensorEventListener stepL;
     Sensor stepSensor;
+    // Step counter is not work in old version. (work in android version after 5.0)
 
     boolean isStart1, isUnrel1;
     int loopCount1, cntUnrel1;

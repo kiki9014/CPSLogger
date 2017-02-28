@@ -93,9 +93,12 @@ public class SoftSensingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mQuit = true;
-        histCur.close();
-        bookCur.close();
-        keyCur.close();
+        if (histCur != null)
+            histCur.close();
+        if (bookCur != null)
+            bookCur.close();
+        if (keyCur != null)
+            keyCur.close();
 
         if(fileOpen){
             clipLogger.closeFile(nameClip);
@@ -235,13 +238,13 @@ public class SoftSensingService extends Service {
 
             while(!mQuit){
                 try{
-                    histCur.moveToFirst();
+//                    histCur.moveToFirst();
                     String title = "";
                     String url = "";
 
 //            Log.d("histCur", "hist: "+histCur.getCount());
 
-                    if (histCur.moveToFirst() && histCur.getCount() > 0) {
+                    if (histCur != null && histCur.getCount() > 0 && histCur.moveToFirst()) {
                         while (histCur.isAfterLast() == false) {
 
                             title = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
@@ -306,12 +309,12 @@ public class SoftSensingService extends Service {
 
                 try{
 
-                    bookCur.moveToFirst();
+//                    bookCur.moveToFirst();
 
                     String title = "";
                     String url = "";
 
-                    if (bookCur.moveToFirst() && bookCur.getCount() > 0) {
+                    if (bookCur != null && bookCur.getCount() > 0 && bookCur.moveToFirst()) {
                         while (bookCur.isAfterLast() == false) {
 
                             title = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
@@ -373,7 +376,7 @@ public class SoftSensingService extends Service {
             while(!mQuit){
 
                 try{
-                    keyCur.moveToFirst();
+//                    keyCur.moveToFirst();
 
                     String date = "";
                     String search = "";
@@ -386,7 +389,7 @@ public class SoftSensingService extends Service {
 //                    Log.i("date", date);
 //                    Log.i("search", search);
 
-                    if (keyCur.moveToFirst() && keyCur.getCount() > 0) {
+                    if ( keyCur != null && keyCur.getCount() > 0 && keyCur.moveToFirst()) {
                         while (keyCur.isAfterLast() == false) {
 
                             String key;

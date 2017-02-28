@@ -69,6 +69,7 @@ public class MainActivity extends Activity {
         intentSig = new Intent(MainActivity.this,SignalSensingService.class);
         intentPhone = new Intent(MainActivity.this,PhoneStateService.class);
 
+        //Logging for debug. Only valid when error occurred and app is closed. Need to be changed for more precise debugging
         try {
             Calendar calendar = Calendar.getInstance();
             File logfile= new File(Environment.getExternalStorageDirectory()+"/CPSLogger/logfile_" + new SimpleDateFormat("yyyy_MM_dd").format(new Date()) + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s.txt");
@@ -80,6 +81,7 @@ public class MainActivity extends Activity {
         }
         //startService(intentGear);
 
+        //Open setting page for enabling notification listener
         ContentResolver contentResolver = this.getContentResolver();
         String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
         if(enabledNoti != null && enabledNoti.contains(this.getPackageName())){

@@ -13,6 +13,7 @@ import android.os.*;
 import android.util.*;
 import android.widget.*;
 
+//3rd party library. but it uses linux kernel and will work in continued version upgrade
 import com.jaredrummler.android.processes.AndroidProcesses;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;
 import com.jaredrummler.android.processes.models.AndroidProcess;
@@ -69,7 +70,6 @@ public class RunningAppService extends Service {
         return null;
     }
 
-
     private class appThread extends Thread {
 
         public void run() {
@@ -92,6 +92,7 @@ public class RunningAppService extends Service {
             }
         }
 
+        //Not used now
         public String printForegroundTask(Context context) {
             String currentApp = "Null";
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

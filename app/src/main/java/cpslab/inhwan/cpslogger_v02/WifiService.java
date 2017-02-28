@@ -77,11 +77,11 @@ public class WifiService extends Service {
                     sbOrigin = new StringBuilder();
                     sb.append(configs.size());
                     for(int i = 0; i < configs.size(); i++) {
-                        String BSSID = configs.get(i).BSSID;
-                        String SSID = configs.get(i).SSID;
+                        String BSSID = configs.get(i).BSSID;    //MAC address
+                        String SSID = configs.get(i).SSID;      //AP name
                         String cap = configs.get(i).capabilities;
-                        int freq = configs.get(i).frequency;
-                        int level = configs.get(i).level;
+                        int freq = configs.get(i).frequency;    //2.4GHz or 5.0GHz(24XXHz or 50XXHz)
+                        int level = configs.get(i).level;       //signal length. Negative value. Larger is stronger
 
                         sb.append(Base64.encodeToString((BSSID + "," + SSID + "," + cap + "," + freq + "," + level).getBytes(),Base64.NO_WRAP));
                         sbOrigin.append(BSSID + "," + SSID + "," + cap + "," + freq + "," + level + "\n");

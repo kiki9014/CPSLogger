@@ -69,12 +69,14 @@ public class MyPhoneStateListener extends PhoneStateListener {
         savePhonestateData(stateData);
     }
 
+    //Cast string to phone state logger (logger is in "PhoneStateService")
     void savePhonestateData(String data){
         Intent i = new Intent("cpslab.inhwan.cpslogger_v02.PhoneStateLogging");
         i.putExtra("data2Log", data);
         context.sendBroadcast(i);
     }
 
+    //Request recodingService to pause or resume recording
     void requestRecord(boolean ok){
         Intent i = new Intent("cpslab.inhwan.cpslogger_v02.PhoneState");
         i.putExtra("requestPause", ok);
