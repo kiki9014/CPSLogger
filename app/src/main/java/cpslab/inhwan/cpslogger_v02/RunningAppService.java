@@ -32,7 +32,6 @@ public class RunningAppService extends Service {
 
     public void onCreate() {
         super.onCreate();
-//		unregisterRestartAlarm();
 
         fileOpen = true;
     }
@@ -40,8 +39,6 @@ public class RunningAppService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mQuit = true;
-//		registerRestartAlarm();
-//		Toast.makeText(this, "App-Watching is ended", 0).show();
 
         if(fileOpen){
             appLogger.closeFile(name);

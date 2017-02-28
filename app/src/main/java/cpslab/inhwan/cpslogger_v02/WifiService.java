@@ -30,7 +30,6 @@ public class WifiService extends Service {
         mWifiMan = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 
         fileOpen = true;
-//		unregisterRestartAlarm();
     }
 
     public void onDestroy() {
@@ -41,8 +40,6 @@ public class WifiService extends Service {
             wifiLogger.closeFile(name);
             fileOpen = false;
         }
-//		registerRestartAlarm();
-//		Toast.makeText(this, "Wifi-Watching is ended", 0).show();
     }
 
     public int onStartCommand (Intent intent, int flags, int startId) {
@@ -86,13 +83,9 @@ public class WifiService extends Service {
                         sb.append(Base64.encodeToString((BSSID + "," + SSID + "," + cap + "," + freq + "," + level).getBytes(),Base64.NO_WRAP));
                         sbOrigin.append(BSSID + "," + SSID + "," + cap + "," + freq + "," + level + "\n");
 
-//                        sb.append(new Integer(i+1).toString() + "::");
-//                        sb.append(seg[0] + "\n" + seg[1] + "\n" + seg[3]);
-//                        sb.append("\n\n");
                         if(i < configs.size() - 1)
                             sb.append(",");
                     }
-//                    Log.d("Wifi Connection Info: ", sbOrigin + "\n");
                     wifiLogger.writeData(sb.toString());
                     sleep(30000);
                 } catch (InterruptedException e) {

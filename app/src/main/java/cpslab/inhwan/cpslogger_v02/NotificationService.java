@@ -53,8 +53,6 @@ public class NotificationService extends NotificationListenerService {
 
     static boolean fileOpen;
 
-//    File tableFile = new File(context.getFilesDir(), "HashTable.txt");
-
     Hashtable<String, Integer> senderList;
     Hashtable<String, Integer> mmsList;
     Hashtable<String, Integer> smsList;
@@ -106,7 +104,6 @@ public class NotificationService extends NotificationListenerService {
             getNotiData(sbn,true);
         }
         else {
-//            Log.i(name, "Not Start Collecting");
         }
     }
 
@@ -117,7 +114,6 @@ public class NotificationService extends NotificationListenerService {
             getNotiData(sbn,false);
         }
         else {
-//            Log.i(name, "Not Start Collecting");
         }
     }
 
@@ -146,36 +142,8 @@ public class NotificationService extends NotificationListenerService {
 
         notiLogger.writeData("Notification Listen Service is started");
 
-//        IntentFilter iF = new IntentFilter();
-//        iF.addAction("com.android.music.metachanged");
-//        iF.addAction("com.android.music.playstatechanged");
-//        iF.addAction("com.android.music.playbackcomplete");
-//        iF.addAction("com.android.music.queuechanged");
-//        registerReceiver(mMReceiver, iF);
-
         return START_NOT_STICKY;
     }
-
-//    public void quitFunc(){
-////        Log.v(name, "Service will be destroyed");
-//
-//        startTrigger = false;
-////        Log.v(name, "Service is destroyed");
-//        unregisterReceiver(nReceiver);
-//        unregisterReceiver(mMReceiver);
-//        unregisterReceiver(smsMan);
-//        unregisterReceiver(mmsMan);
-//
-//        if(fileOpen){
-//            notiLogger.closeFile(name);
-//            fileOpen = false;
-//        }
-//        exportHashTable(senderList, "Notification");
-//        exportHashTable(mmsList, "MMS");
-//        exportHashTable(smsList, "SMS");
-//
-//        Toast.makeText(this,"NotificationCollecting is Ended",Toast.LENGTH_SHORT).show();
-//    }
 
         //Trace stack of unregistration receiver
     public void safelyUnregisterReceiver(BroadcastReceiver receiver){
@@ -196,7 +164,6 @@ public class NotificationService extends NotificationListenerService {
         Log.v(name, "Service is destroyed");
         //Safely unregister receiver
         safelyUnregisterReceiver(nReceiver);
-//        safelyUnregisterReceiver(mMReceiver);
         safelyUnregisterReceiver(smsMan);
         safelyUnregisterReceiver(mmsMan);
 
@@ -216,7 +183,6 @@ public class NotificationService extends NotificationListenerService {
     public void getNotiData(StatusBarNotification sbn, boolean isPosted){
         String pack = Base64.encodeToString(sbn.getPackageName().getBytes(), Base64.NO_WRAP);
         String text, sbText, ticker, title, bText;
-        //String ticker = "tickerTest";
         CharSequence tickerSQ = sbn.getNotification().tickerText;
         Bundle extras = sbn.getNotification().extras;
         CharSequence cTitle = extras.getCharSequence("android.title");
@@ -259,11 +225,6 @@ public class NotificationService extends NotificationListenerService {
         else
             sbText = Base64.encodeToString(cSbText.toString().getBytes(),Base64.NO_WRAP);
 
-//        Log.i("Package", new String(Base64.decode(pack,Base64.NO_WRAP)));
-//        Log.i("Ticker", new String(Base64.decode(ticker,Base64.NO_WRAP)));
-//        Log.i("Title", new String(Base64.decode(title,Base64.NO_WRAP)));
-//        Log.i("Text", new String(Base64.decode(text,Base64.NO_WRAP)));
-//        Log.i("Sub Text", new String(Base64.decode(sbText,Base64.NO_WRAP)));
 
         String textToSave;
         String action;
@@ -272,7 +233,6 @@ public class NotificationService extends NotificationListenerService {
         else
             action = "removed";
 
-//        textToSave = pack + "," + ticker + "," + title + "," + text + "," + sbText + "," +  action;
         int contentLen;
         if(cText == null)
             contentLen = 0;
@@ -290,10 +250,8 @@ public class NotificationService extends NotificationListenerService {
         @Override
         public void onReceive(Context context, Intent intent){
             String cmd = intent.getStringExtra("Notification_Event");
-//            Log.d("NotificationBR", cmd);
             if(cmd.equals("QUIT")){
                 stopSelf();
-//                quitFunc();
                 if(fileOpen){
                     notiLogger.closeFile(name);
                     fileOpen = false;
@@ -330,15 +288,12 @@ public class NotificationService extends NotificationListenerService {
                         String phoneNumber = currMessage.getDisplayOriginatingAddress();
                         if(!smsList.containsKey(phoneNumber)){
                             smsList.put(phoneNumber,smsList.size());
-//                            Log.d("SMSReceive", phoneNumber + "is new.");
                         }
                         else {
-//                            Log.d("SMSReceive",phoneNumber + "exists.");
                         }
                         String sendNumber = Integer.toString(smsList.get(phoneNumber));
                         String message = currMessage.getDisplayMessageBody();
 
-//                        Log.i("SMSReceive", "From : " + sendNumber + ", Message : " + message);
 
                         String text2Save = "SMS," + Base64.encodeToString(sendNumber.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(Integer.toString(message.length()).getBytes(),Base64.NO_WRAP);//Base64.encodeToString(message.getBytes(),Base64.NO_WRAP);
                         if(fileOpen){
@@ -348,7 +303,6 @@ public class NotificationService extends NotificationListenerService {
                 }
             }
             catch (Exception e){
-//                Log.e("SMSReceive", "Exception Error, " + e);
             }
         }
     }
@@ -520,19 +474,6 @@ public class NotificationService extends NotificationListenerService {
         else
             return false;
     }
-
-//    private BroadcastReceiver mMReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            String cmd = intent.getStringExtra("command");
-////            Log.d("mReceiver.onReceive ", action + " / " + cmd);
-//            String artist = intent.getStringExtra("artist");
-//            String album = intent.getStringExtra("album");
-//            String track = intent.getStringExtra("track");
-////            Log.d("Music",artist+":"+album+":"+track);
-//        }
-//    };
 
     public Hashtable<String, Integer> importHashTable(String name){
         Hashtable<String, Integer> hashT;

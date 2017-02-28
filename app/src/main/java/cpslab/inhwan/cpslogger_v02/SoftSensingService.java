@@ -33,8 +33,6 @@ public class SoftSensingService extends Service {
 
     ClipData clipData;
 
-    Uri messageUri;
-
     String[] bookMark, searchKey, smsString;
     String sel1, sel2, colName;
     Cursor histCur, bookCur, keyCur, smsCur;
@@ -65,8 +63,6 @@ public class SoftSensingService extends Service {
 
         clipboardManager =  (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
-//        messageUri = Uri.parse("content://com.sec.mms.provider/message"); //content://com.sec.mms.provider/message or content://sms/
-
         bookMark = new String[] {Browser.BookmarkColumns.TITLE, Browser.BookmarkColumns.URL};
         searchKey = new String[] {Browser.SearchColumns.DATE, Browser.SearchColumns.SEARCH};
         smsString = new String[] {"_id", "address", "body", "person"};
@@ -79,9 +75,6 @@ public class SoftSensingService extends Service {
         histCur = getContentResolver().query(uriCustom, bookMark, sel1, null, null); // cursor for history
         bookCur = getContentResolver().query(uriCustom, bookMark, sel2, null, null); // cursor for bookmark
         keyCur = getContentResolver().query(Browser.SEARCHES_URI, searchKey, null, null, null);
-//	    startManagingCursor(mCur);
-
-//        smsCur = getContentResolver().query(messageUri, smsString, null, null, null);
 
         // Memory Information
         mi = new ActivityManager.MemoryInfo();
@@ -109,7 +102,6 @@ public class SoftSensingService extends Service {
             dataLogger.closeFile(nameData);
             fileOpen = false;
         }
-//		smsCur.close();
     }
 
     public int onStartCommand (Intent intent, int flags, int startId) {
@@ -160,15 +152,10 @@ public class SoftSensingService extends Service {
 
         public void run() {
 
-//            ContentResolver cr = getContentResolver();
             while(!mQuit){
                 try{
                     clipData = clipboardManager.getPrimaryClip();
                     if (clipData != null) {
-
-//                        clipboardManager.get
-
-//                        clipTxt = clipboardManager.getText().toString();
                         ClipData.Item item = clipData.getItemAt(0);
 
                         clipTxt = item.toString();
@@ -184,50 +171,6 @@ public class SoftSensingService extends Service {
                 }
 
             }
-
-//            while(!mQuit) {
-//                try {
-//
-//                    ContentResolver cr = getContentResolver();
-//
-//                    clipData = clipboardManager.getPrimaryClip();
-//                    if (clipData != null) {
-//
-////                        clipboardManager.get
-//
-////                        clipTxt = clipboardManager.getText().toString();
-//                        ClipData.Item item = clipData.getItemAt(0);
-//
-//                        clipTxt = item.toString();
-//
-////                        if (firstFlag) {
-////                            prevTxt = clipTxt;
-////                            firstFlag = false;
-////                        }
-//
-//                        String a = String.valueOf(clipTxt.equals(prevTxt));
-////                        String a = String.valueOf(firstFlag);
-//
-////                        Log.i("clipPrev", a + prevTxt + clipTxt);
-//
-//                        if (!clipTxt.equals(prevTxt)) {
-//
-//                            Log.i("clipboard", clipTxt);
-//
-//                            prevTxt = clipTxt;
-//
-//                        }
-//
-////                        clipboardManager.setText(null);
-//                    }
-//                    else {
-//
-//                    }
-//                    sleep(30000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
     }
 
@@ -238,19 +181,15 @@ public class SoftSensingService extends Service {
 
             while(!mQuit){
                 try{
-//                    histCur.moveToFirst();
                     String title = "";
                     String url = "";
 
-//            Log.d("histCur", "hist: "+histCur.getCount());
 
                     if (histCur != null && histCur.getCount() > 0 && histCur.moveToFirst()) {
                         while (histCur.isAfterLast() == false) {
 
                             title = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
                             url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
-//							url = histCur.getString(histCur.getColumnIndex("URL"));
-                            // Do something with title and url
                             Log.i("histtitle", title);
                             Log.i("histurl", url);
                             if(fileOpen){
@@ -270,34 +209,6 @@ public class SoftSensingService extends Service {
 
             histCur.close();
 
-//            while(!mQuit) {
-//                try {
-//
-//                    histCur.moveToFirst();
-//                    String title = "";
-//                    String url = "";
-//
-//                    Log.d("histCur", "hist: "+histCur.getCount());
-//
-//                    if (histCur.moveToFirst() && histCur.getCount() > 0) {
-//                        while (histCur.isAfterLast() == false) {
-//
-//                            title = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
-//                            url = histCur.getString(histCur.getColumnIndex(Browser.BookmarkColumns.URL));
-////							url = histCur.getString(histCur.getColumnIndex("URL"));
-//                            // Do something with title and url
-////                            Log.i("histtitle", title);
-////                            Log.i("histurl", url);
-//
-//                            histCur.moveToNext();
-//                        }
-//                    }
-////				    histCur.close();
-//                    sleep(0);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
     }
 
@@ -308,8 +219,6 @@ public class SoftSensingService extends Service {
             while(!mQuit){
 
                 try{
-
-//                    bookCur.moveToFirst();
 
                     String title = "";
                     String url = "";
@@ -339,33 +248,6 @@ public class SoftSensingService extends Service {
                 }
             }
             bookCur.close();
-
-//            while(!mQuit) {
-//                try {
-//
-//                    bookCur.moveToFirst();
-//
-//                    String title = "";
-//                    String url = "";
-//
-//                    if (bookCur.moveToFirst() && bookCur.getCount() > 0) {
-//                        while (bookCur.isAfterLast() == false) {
-//
-//                            title = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
-//                            url = bookCur.getString(bookCur.getColumnIndex(Browser.BookmarkColumns.URL));
-//                            // Do something with title and url
-////                            Log.i("booktitle", title);
-////                            Log.i("bookurl", url);
-//
-//                            bookCur.moveToNext();
-//                        }
-//                    }
-//                    bookCur.close();
-//                    sleep(0);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
     }
 
@@ -376,18 +258,10 @@ public class SoftSensingService extends Service {
             while(!mQuit){
 
                 try{
-//                    keyCur.moveToFirst();
 
                     String date = "";
                     String search = "";
-
-//                    Log.i("search count", "count: " + keyCur.getCount());
-
-//            date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
-//            search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
                     // Do something with date and search(keyword)
-//                    Log.i("date", date);
-//                    Log.i("search", search);
 
                     if ( keyCur != null && keyCur.getCount() > 0 && keyCur.moveToFirst()) {
                         while (keyCur.isAfterLast() == false) {
@@ -398,8 +272,6 @@ public class SoftSensingService extends Service {
                             // Do something with date and search(keyword)
 
                             key = Base64.encodeToString(date.getBytes(),Base64.NO_WRAP) + "," + Base64.encodeToString(search.getBytes(),Base64.NO_WRAP);
-//                            Log.i("date", date);
-//                            Log.i("search", search);
                             if(fileOpen){
                                 keyLogger.writeData("keyDate,"+Base64.encodeToString(date.getBytes(),Base64.NO_WRAP));
                                 keyLogger.writeData("keySearch,"+Base64.encodeToString(search.getBytes(),Base64.NO_WRAP));
@@ -416,40 +288,6 @@ public class SoftSensingService extends Service {
             }
 
             keyCur.close();
-//            while(!mQuit) {
-//                try {
-//
-//                    keyCur.moveToFirst();
-//
-//                    String date = "";
-//                    String search = "";
-//
-////                    Log.i("search count", "count: " + keyCur.getCount());
-//
-//                    date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
-//                    search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
-//                    // Do something with date and search(keyword)
-////                    Log.i("date", date);
-////                    Log.i("search", search);
-//
-//                    if (keyCur.moveToFirst() && keyCur.getCount() > 0) {
-//                        while (keyCur.isAfterLast() == false) {
-//
-//                            date = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.DATE));
-//                            search = keyCur.getString(keyCur.getColumnIndex(Browser.SearchColumns.SEARCH));
-//                            // Do something with date and search(keyword)
-////                            Log.i("date", date);
-////                            Log.i("search", search);
-//
-//                            keyCur.moveToNext();
-//                        }
-//                    }
-//				    keyCur.close();
-//                    sleep(0);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
     }
 
@@ -459,24 +297,6 @@ public class SoftSensingService extends Service {
 
             while(!mQuit) {
                 try {
-
-//					Bundle bundle = intent.getExtras();
-//					SmsMessage[] msgs = null;
-//					String str = "";
-//					if (bundle != null)
-//					{
-//						//---retrieve the SMS message received---
-//						Object[] pdus = (Object[]) bundle.get("pdus");
-//						msgs = new SmsMessage[pdus.length];
-//						for (int i=0; i<msgs.length; i++){
-//							msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-//							str += "SMS from " + msgs[i].getOriginatingAddress();
-//							str += " :";
-//							str += msgs[i].getMessageBody().toString();
-//							str += "\n";
-//						}
-//						//---display the new SMS message---
-//						Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
 //					}
 
                     sleep(100000);
@@ -528,9 +348,6 @@ public class SoftSensingService extends Service {
                             dataLogger.writeData("tx,"+Long.toString(tx));
                             dataLogger.writeData("rx,"+Long.toString(rx));
                         }
-//                        Log.i("Uid", Integer.toString(packageInfo.uid));
-//                        Log.i("Tx", Long.toString(tx));
-//                        Log.i("Rx", Long.toString(rx));
                     }
 
                     sleep(30000);

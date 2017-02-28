@@ -10,7 +10,6 @@ public class ServiceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        Log.i(TAG, "ServiceReceiver->onReceive();");
         MyPhoneStateListener phoneListener = new MyPhoneStateListener(context);
         TelephonyManager telephony = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -20,6 +19,5 @@ public class ServiceReceiver extends BroadcastReceiver {
         Intent testActivityIntent = new Intent(context, MainActivity.class);
         testActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         testActivityIntent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-//        context.startActivity(testActivityIntent);
     }
 }

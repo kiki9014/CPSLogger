@@ -24,9 +24,7 @@ public class LocationService extends Service {
         super.onCreate();
         mLocMan = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         mProvider = mLocMan.getBestProvider(new Criteria(), true);
-//		mProvider = mLocMan.NETWORK_PROVIDER;
         locL = new locListener();
-//		unregisterRestartAlarm();
 
         fileOpen = true;
     }
@@ -38,8 +36,6 @@ public class LocationService extends Service {
             locLogger.closeFile(name);
             fileOpen = false;
         }
-//		registerRestartAlarm();
-//		Toast.makeText(this, "Loc-Watching is ended", 0).show();
     }
 
     public int onStartCommand (Intent intent, int flags, int startId) {
@@ -62,11 +58,6 @@ public class LocationService extends Service {
 
     private class locListener implements LocationListener {
         public void onLocationChanged(Location location) {
-//			while(!mQuit) {
-//            lg_Loc.o("LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
-//			}
-
-//            Log.d("GPS: ", "LAT: " + location.getLatitude() + ", LON: " + location.getLongitude() + ", ALT: " + location.getAltitude());
 
             if(fileOpen)
                 locLogger.writeData("GPS," + location.getLatitude() + "," + location.getLongitude() + "," + location.getAltitude());
@@ -87,9 +78,6 @@ public class LocationService extends Service {
 
             if(nmea.startsWith("$GPGGA")) {
                 String str_temp[] = nmea.split(",");
-//                mTxtGPSno.setText("GPS No: " + str_temp[7] + "\n");
-//                lg_GPS.o("No. of Satellite: " + str_temp[7]);
-//                Log.d("No. of Satellite", str_temp[7]);
                 if(fileOpen)
                     locLogger.writeData("SAT,"+ str_temp[7]);
             }

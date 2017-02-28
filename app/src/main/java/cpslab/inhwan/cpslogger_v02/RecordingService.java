@@ -70,10 +70,8 @@ public class RecordingService extends Service {
         File dir = new File(sd + "/CPSLogger/recorded/" + currentDate);
         if(!dir.exists()){
             dir.mkdirs();
-//            Log.i("record", "Directory is created");
         }
         else {
-//            Log.i("record", "Directory is already exist");
         }
         String Path = sd + "/CPSLogger/recorded/" + currentDate + "/" + (calendar.get(Calendar.MONTH)+1) + "M" + calendar.get(Calendar.DAY_OF_MONTH) + "d" + calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE) + "m" + calendar.get(Calendar.SECOND) + "s" + ".cps";
         if (mRecorder == null) {

@@ -64,7 +64,6 @@ public class MovingService extends Service {
         mSm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
         fileOpen = true;
-        //		unregisterRestartAlarm();
     }
 
     public void onDestroy() {
@@ -82,9 +81,6 @@ public class MovingService extends Service {
             stepLogger.closeFile(nameStep);
             fileOpen = false;
         }
-
-        //		registerRestartAlarm();
-        //		Toast.makeText(this, "Mov-Watching is ended", 0).show();		//toast message
     }
 
     public int onStartCommand (Intent intent, int flags, int startId) {
@@ -166,11 +162,9 @@ public class MovingService extends Service {
                 acc[0] = Double.toString(accc[0]);
                 acc[1] = Double.toString(accc[1]);
                 acc[2] = Double.toString(accc[2]);
-//                Log.d("acc", acc[0] + ", " + acc[1] + ", " + acc[2]);
                 if(fileOpen)
                     accLogger.writeData("1" +"," + acc[0] + ", " + acc[1] + ", " + acc[2]);
 
-//                lg_Mov.o(acc[0] + ", " + acc[1] + ", " + acc[2]);
             }
         }
     }
@@ -199,11 +193,9 @@ public class MovingService extends Service {
                 gyr[0] = Double.toString(gyro[0]);
                 gyr[1] = Double.toString(gyro[1]);
                 gyr[2] = Double.toString(gyro[2]);
-//                Log.d("gyr", gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
                 if(fileOpen)
                     gyroLogger.writeData("2," + gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
 
-//                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
             }
         }
     }
@@ -232,11 +224,9 @@ public class MovingService extends Service {
                 mag[0] = Double.toString(magg[0]);
                 mag[1] = Double.toString(magg[1]);
                 mag[2] = Double.toString(magg[2]);
-//                Log.d("mag", mag[0] + ", " + mag[1] + ", " + mag[2]);
                 if(fileOpen)
                     magLogger.writeData("3," + mag[0] + ", " + mag[1] + ", " + mag[2]);
 
-//                lg_Mag.o(mag[0] + ", " + mag[1] + ", " + mag[2]);
             }
         }
     }
@@ -253,7 +243,6 @@ public class MovingService extends Service {
                 if(fileOpen)
                     stepLogger.writeData("4," + stp);
 
-//                lg_Gyr.o(gyr[0] + ", " + gyr[1] + ", " + gyr[2]);
             }
         }
     }

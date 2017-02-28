@@ -37,7 +37,6 @@ public class MyPhoneStateListener extends PhoneStateListener {
                 stateData = "MyPhoneStateListener->onCallStateChanged() -> default -> " + Integer.toString(state);
                 break;
         }
-//        Log.i(TAG, stateData);
         savePhonestateData(stateData);
     }
 
@@ -65,7 +64,6 @@ public class MyPhoneStateListener extends PhoneStateListener {
                 stateData = "MyPhoneStateListener->onCallStateChanged() -> default -> " + Integer.toString(serviceState.getState());
                 break;
         }
-//        Log.i(TAG,stateData);
         savePhonestateData(stateData);
     }
 

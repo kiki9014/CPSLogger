@@ -37,7 +37,6 @@ public class MainActivity extends Activity {
     Intent intentSoft;
     Intent intentApp;
     Intent intentNoti;
-    Intent intentGear;
     Intent intentSig;
     Intent intentPhone;
 
@@ -56,7 +55,6 @@ public class MainActivity extends Activity {
         mWakeLock = null;
         mButton = false;
         onOff = false;
-//    	serviceOn = false;
 
         intentLoc = new Intent(MainActivity.this, LocationService.class);
         intentMov = new Intent(MainActivity.this, MovingService.class);
@@ -79,7 +77,6 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //startService(intentGear);
 
         //Open setting page for enabling notification listener
         ContentResolver contentResolver = this.getContentResolver();
@@ -99,8 +96,6 @@ public class MainActivity extends Activity {
         Button btnstart = (Button)findViewById(R.id.start);
         btnstart.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-//                Intent settingUsage = new Intent("android.settigs.ACTION_USAGE_ACCESS_SETTINGS");
-//                startActivity(settingUsage);
 
                 mButton = true;
 
@@ -110,8 +105,6 @@ public class MainActivity extends Activity {
 
                 // start the thread
                 kgthread.start();
-                //Intent textInputAct = new Intent(MainActivity.this,textInput.class);
-                //startActivity(textInputAct);
             }
         });
 
@@ -129,7 +122,6 @@ public class MainActivity extends Activity {
                 stopService(intentWifi);
 				stopService(intentRec);
                 stopService(intentSoft);
-//                stopService(intentGear);
                 stopService(intentApp);
                 stopService(intentSig);
                 stopService(intentNoti);
@@ -142,7 +134,6 @@ public class MainActivity extends Activity {
                 ContentResolver contentResolver = MainActivity.this.getContentResolver();
                 String enabledNoti = Settings.Secure.getString(contentResolver,"enabled_notification_listeners");
                 while(enabledNoti != null && enabledNoti.contains(MainActivity.this.getPackageName())){
-//                    Log.d("main","Already Set");
                     Log.d("main", "Not disabled : " + enabledNoti.contains(MainActivity.this.getPackageName()));
                     try {
                         SystemClock.sleep(1000);
@@ -176,7 +167,6 @@ public class MainActivity extends Activity {
 
     public void onDestroy() {
         super.onDestroy();
-        //stopService(intentGear);
     }
 
     public void onPause() {
@@ -204,7 +194,6 @@ public class MainActivity extends Activity {
                     startService(intentSoft);
                     startService(intentApp);
                     startService(intentNoti);
-//                    startService(intentGear);
                     startService(intentSig);
                     startService(intentPhone);
 
@@ -237,7 +226,6 @@ public class MainActivity extends Activity {
                     stopService(intentSoft);
                     stopService(intentNoti);
                     stopService(intentApp);
-//                    stopService(intentGear);
                     stopService(intentSig);
                     stopService(intentPhone);
 
